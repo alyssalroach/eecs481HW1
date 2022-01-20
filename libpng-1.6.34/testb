@@ -10,12 +10,6 @@ set -x
 sh ./configure CFLAGS="--coverage -static"
 make clean ; make 
 
-./pngtest pngtest.png
-gcov *.c
-
-./pngtest contrib/gregbook/toucan.png
-gcov *.c
-
 ./pngtest our_tests/test1.png
 gcov *.c
 
@@ -23,6 +17,96 @@ gcov *.c
 gcov *.c
 
 ./pngtest our_tests/test3.png
+gcov *.c
+
+./pngtest our_tests/test4.png
+gcov *.c
+
+./pngtest our_tests/test5.png
+gcov *.c
+
+./pngtest our_tests/test6.png
+gcov *.c
+
+./pngtest our_tests/test7.png
+gcov *.c
+
+./pngtest our_tests/test8.png
+gcov *.c
+
+./pngtest our_tests/test9.png
+gcov *.c
+
+./pngtest our_tests/test10.png
+gcov *.c
+
+./pngtest our_tests/test11.png
+gcov *.c
+
+./pngtest our_tests/test12.png
+gcov *.c
+
+./pngtest our_tests/test13.png
+gcov *.c
+
+./pngtest our_tests/test14.png
+gcov *.c
+
+./pngtest our_tests/test15.png
+gcov *.c
+
+./pngtest our_tests/test16.png
+gcov *.c
+
+./pngtest our_tests/test17.png
+gcov *.c
+
+./pngtest our_tests/test18.png
+gcov *.c
+
+./pngtest our_tests/test19.png
+gcov *.c
+
+./pngtest our_tests/test20.png
+gcov *.c
+
+./pngtest our_tests/test21.png
+gcov *.c
+
+./pngtest our_tests/test22.png
+gcov *.c
+
+./pngtest our_tests/test23.png
+gcov *.c
+
+./pngtest our_tests/test24.png
+gcov *.c
+
+./pngtest our_tests/test25.png
+gcov *.c
+
+./pngtest our_tests/test26.png
+gcov *.c
+
+./pngtest our_tests/test27.png
+gcov *.c
+
+./pngtest our_tests/test28.png
+gcov *.c
+
+./pngtest our_tests/test29.png
+gcov *.c
+
+./pngtest our_tests/test30.png
+gcov *.c
+
+./pngtest our_tests/test31.png
+gcov *.c
+
+./pngtest our_tests/test32.png
+gcov *.c
+
+./pngtest our_tests/test33.png
 gcov *.c
 
 rm *.gcda pngout.png
