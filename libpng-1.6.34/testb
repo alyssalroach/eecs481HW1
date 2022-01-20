@@ -22,4 +22,7 @@ gcov *.c
 ./pngtest our_tests/test3.png
 gcov *.c
 
+./pngtest our_tests/test60.png
+gcov *.c
+
 rm *.gcda pngout.png

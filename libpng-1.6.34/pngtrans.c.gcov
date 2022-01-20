@@ -98,17 +98,17 @@
         -:   96:#if defined(PNG_READ_INTERLACING_SUPPORTED) || \
         -:   97:    defined(PNG_WRITE_INTERLACING_SUPPORTED)
         -:   98:int PNGAPI
-       12:   99:png_set_interlace_handling(png_structrp png_ptr)
+       30:   99:png_set_interlace_handling(png_structrp png_ptr)
         -:  100:{
         -:  101:   png_debug(1, "in png_set_interlace handling");
         -:  102:
-       12:  103:   if (png_ptr != 0 && png_ptr->interlaced != 0)
+       30:  103:   if (png_ptr != 0 && png_ptr->interlaced != 0)
         -:  104:   {
        12:  105:      png_ptr->transformations |= PNG_INTERLACE;
        12:  106:      return (7);
         -:  107:   }
         -:  108:
-    #####:  109:   return (1);
+       18:  109:   return (1);
         -:  110:}
         -:  111:#endif
         -:  112:
