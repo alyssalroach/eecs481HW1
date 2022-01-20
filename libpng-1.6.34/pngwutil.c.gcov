@@ -23,13 +23,13 @@
         -:   21: * ancillary chunk uses signed (two's complement) numbers.
         -:   22: */
         -:   23:void PNGAPI
-      219:   24:png_save_uint_32(png_bytep buf, png_uint_32 i)
+      291:   24:png_save_uint_32(png_bytep buf, png_uint_32 i)
         -:   25:{
-      219:   26:   buf[0] = (png_byte)((i >> 24) & 0xffU);
-      219:   27:   buf[1] = (png_byte)((i >> 16) & 0xffU);
-      219:   28:   buf[2] = (png_byte)((i >>  8) & 0xffU);
-      219:   29:   buf[3] = (png_byte)( i        & 0xffU);
-      219:   30:}
+      291:   26:   buf[0] = (png_byte)((i >> 24) & 0xffU);
+      291:   27:   buf[1] = (png_byte)((i >> 16) & 0xffU);
+      291:   28:   buf[2] = (png_byte)((i >>  8) & 0xffU);
+      291:   29:   buf[3] = (png_byte)( i        & 0xffU);
+      291:   30:}
         -:   31:
         -:   32:/* Place a 16-bit number into a buffer in PNG byte order.
         -:   33: * The parameter is declared unsigned int, not png_uint_16,
@@ -50,29 +50,29 @@
         -:   48: * bytes have already been written.
         -:   49: */
         -:   50:void PNGAPI
-        3:   51:png_write_sig(png_structrp png_ptr)
+        6:   51:png_write_sig(png_structrp png_ptr)
         -:   52:{
-        3:   53:   png_byte png_signature[8] = {137, 80, 78, 71, 13, 10, 26, 10};
+        6:   53:   png_byte png_signature[8] = {137, 80, 78, 71, 13, 10, 26, 10};
         -:   54:
         -:   55:#ifdef PNG_IO_STATE_SUPPORTED
         -:   56:   /* Inform the I/O callback that the signature is being written */
-        3:   57:   png_ptr->io_state = PNG_IO_WRITING | PNG_IO_SIGNATURE;
+        6:   57:   png_ptr->io_state = PNG_IO_WRITING | PNG_IO_SIGNATURE;
         -:   58:#endif
         -:   59:
         -:   60:   /* Write the rest of the 8 byte signature */
-        3:   61:   png_write_data(png_ptr, &png_signature[png_ptr->sig_bytes],
-        3:   62:       (png_size_t)(8 - png_ptr->sig_bytes));
+        6:   61:   png_write_data(png_ptr, &png_signature[png_ptr->sig_bytes],
+        6:   62:       (png_size_t)(8 - png_ptr->sig_bytes));
         -:   63:
-        3:   64:   if (png_ptr->sig_bytes < 3)
-        3:   65:      png_ptr->mode |= PNG_HAVE_PNG_SIGNATURE;
-        3:   66:}
+        6:   64:   if (png_ptr->sig_bytes < 3)
+        6:   65:      png_ptr->mode |= PNG_HAVE_PNG_SIGNATURE;
+        6:   66:}
         -:   67:
         -:   68:/* Write the start of a PNG chunk.  The type is the chunk type.
         -:   69: * The total_length is the sum of the lengths of all the data you will be
         -:   70: * passing in png_write_chunk_data().
         -:   71: */
         -:   72:static void
-       54:   73:png_write_chunk_header(png_structrp png_ptr, png_uint_32 chunk_name,
+       75:   73:png_write_chunk_header(png_structrp png_ptr, png_uint_32 chunk_name,
         -:   74:    png_uint_32 length)
         -:   75:{
         -:   76:   png_byte buf[8];
@@ -82,34 +82,34 @@
         -:   80:   png_debug2(0, "Writing %s chunk, length = %lu", buf, (unsigned long)length);
         -:   81:#endif
         -:   82:
-       54:   83:   if (png_ptr == NULL)
+       75:   83:   if (png_ptr == NULL)
     #####:   84:      return;
         -:   85:
         -:   86:#ifdef PNG_IO_STATE_SUPPORTED
         -:   87:   /* Inform the I/O callback that the chunk header is being written.
         -:   88:    * PNG_IO_CHUNK_HDR requires a single I/O call.
         -:   89:    */
-       54:   90:   png_ptr->io_state = PNG_IO_WRITING | PNG_IO_CHUNK_HDR;
+       75:   90:   png_ptr->io_state = PNG_IO_WRITING | PNG_IO_CHUNK_HDR;
         -:   91:#endif
         -:   92:
         -:   93:   /* Write the length and the chunk name */
-       54:   94:   png_save_uint_32(buf, length);
-       54:   95:   png_save_uint_32(buf + 4, chunk_name);
-       54:   96:   png_write_data(png_ptr, buf, 8);
+       75:   94:   png_save_uint_32(buf, length);
+       75:   95:   png_save_uint_32(buf + 4, chunk_name);
+       75:   96:   png_write_data(png_ptr, buf, 8);
         -:   97:
         -:   98:   /* Put the chunk name into png_ptr->chunk_name */
-       54:   99:   png_ptr->chunk_name = chunk_name;
+       75:   99:   png_ptr->chunk_name = chunk_name;
         -:  100:
         -:  101:   /* Reset the crc and run it over the chunk name */
-       54:  102:   png_reset_crc(png_ptr);
+       75:  102:   png_reset_crc(png_ptr);
         -:  103:
-       54:  104:   png_calculate_crc(png_ptr, buf + 4, 4);
+       75:  104:   png_calculate_crc(png_ptr, buf + 4, 4);
         -:  105:
         -:  106:#ifdef PNG_IO_STATE_SUPPORTED
         -:  107:   /* Inform the I/O callback that chunk data will (possibly) be written.
         -:  108:    * PNG_IO_CHUNK_DATA does NOT require a specific number of I/O calls.
         -:  109:    */
-       54:  110:   png_ptr->io_state = PNG_IO_WRITING | PNG_IO_CHUNK_DATA;
+       75:  110:   png_ptr->io_state = PNG_IO_WRITING | PNG_IO_CHUNK_DATA;
         -:  111:#endif
         -:  112:}
         -:  113:
@@ -126,43 +126,43 @@
         -:  124: * given to png_write_chunk_header().
         -:  125: */
         -:  126:void PNGAPI
-      225:  127:png_write_chunk_data(png_structrp png_ptr, png_const_bytep data,
+     1011:  127:png_write_chunk_data(png_structrp png_ptr, png_const_bytep data,
         -:  128:    png_size_t length)
         -:  129:{
         -:  130:   /* Write the data, and run the CRC over it */
-      225:  131:   if (png_ptr == NULL)
+     1011:  131:   if (png_ptr == NULL)
     #####:  132:      return;
         -:  133:
-      225:  134:   if (data != NULL && length > 0)
+     1011:  134:   if (data != NULL && length > 0)
         -:  135:   {
-      222:  136:      png_write_data(png_ptr, data, length);
+     1005:  136:      png_write_data(png_ptr, data, length);
         -:  137:
         -:  138:      /* Update the CRC after writing the data,
         -:  139:       * in case the user I/O routine alters it.
         -:  140:       */
-      222:  141:      png_calculate_crc(png_ptr, data, length);
+     1005:  141:      png_calculate_crc(png_ptr, data, length);
         -:  142:   }
         -:  143:}
         -:  144:
         -:  145:/* Finish a chunk started with png_write_chunk_header(). */
         -:  146:void PNGAPI
-       54:  147:png_write_chunk_end(png_structrp png_ptr)
+       75:  147:png_write_chunk_end(png_structrp png_ptr)
         -:  148:{
         -:  149:   png_byte buf[4];
         -:  150:
-       54:  151:   if (png_ptr == NULL) return;
+       75:  151:   if (png_ptr == NULL) return;
         -:  152:
         -:  153:#ifdef PNG_IO_STATE_SUPPORTED
         -:  154:   /* Inform the I/O callback that the chunk CRC is being written.
         -:  155:    * PNG_IO_CHUNK_CRC requires a single I/O function call.
         -:  156:    */
-       54:  157:   png_ptr->io_state = PNG_IO_WRITING | PNG_IO_CHUNK_CRC;
+       75:  157:   png_ptr->io_state = PNG_IO_WRITING | PNG_IO_CHUNK_CRC;
         -:  158:#endif
         -:  159:
         -:  160:   /* Write the crc in a single operation */
-       54:  161:   png_save_uint_32(buf, png_ptr->crc);
+       75:  161:   png_save_uint_32(buf, png_ptr->crc);
         -:  162:
-       54:  163:   png_write_data(png_ptr, buf, (png_size_t)4);
+       75:  163:   png_write_data(png_ptr, buf, (png_size_t)4);
         -:  164:}
         -:  165:
         -:  166:/* Write a PNG chunk all at once.  The type is an array of ASCII characters
@@ -175,19 +175,19 @@
         -:  173: * functions instead.
         -:  174: */
         -:  175:static void
-       42:  176:png_write_complete_chunk(png_structrp png_ptr, png_uint_32 chunk_name,
+       60:  176:png_write_complete_chunk(png_structrp png_ptr, png_uint_32 chunk_name,
         -:  177:    png_const_bytep data, png_size_t length)
         -:  178:{
-       42:  179:   if (png_ptr == NULL)
+       60:  179:   if (png_ptr == NULL)
     #####:  180:      return;
         -:  181:
         -:  182:   /* On 64-bit architectures 'length' may not fit in a png_uint_32. */
-       42:  183:   if (length > PNG_UINT_31_MAX)
+       60:  183:   if (length > PNG_UINT_31_MAX)
     #####:  184:      png_error(png_ptr, "length exceeds PNG maximum");
         -:  185:
-       42:  186:   png_write_chunk_header(png_ptr, chunk_name, (png_uint_32)length);
-       42:  187:   png_write_chunk_data(png_ptr, data, length);
-       42:  188:   png_write_chunk_end(png_ptr);
+       60:  186:   png_write_chunk_header(png_ptr, chunk_name, (png_uint_32)length);
+       60:  187:   png_write_chunk_data(png_ptr, data, length);
+       60:  188:   png_write_chunk_end(png_ptr);
         -:  189:}
         -:  190:
         -:  191:/* This is the API that calls the internal function above. */
@@ -204,34 +204,34 @@
         -:  202: * point at which a lower LZ window size can be used.)
         -:  203: */
         -:  204:static png_alloc_size_t
-        6:  205:png_image_size(png_structrp png_ptr)
+       12:  205:png_image_size(png_structrp png_ptr)
         -:  206:{
         -:  207:   /* Only return sizes up to the maximum of a png_uint_32; do this by limiting
         -:  208:    * the width and height used to 15 bits.
         -:  209:    */
-        6:  210:   png_uint_32 h = png_ptr->height;
+       12:  210:   png_uint_32 h = png_ptr->height;
         -:  211:
-        6:  212:   if (png_ptr->rowbytes < 32768 && h < 32768)
+       12:  212:   if (png_ptr->rowbytes < 32768 && h < 32768)
         -:  213:   {
-        6:  214:      if (png_ptr->interlaced != 0)
+       12:  214:      if (png_ptr->interlaced != 0)
         -:  215:      {
         -:  216:         /* Interlacing makes the image larger because of the replication of
         -:  217:          * both the filter byte and the padding to a byte boundary.
         -:  218:          */
-        6:  219:         png_uint_32 w = png_ptr->width;
-        6:  220:         unsigned int pd = png_ptr->pixel_depth;
+       12:  219:         png_uint_32 w = png_ptr->width;
+       12:  220:         unsigned int pd = png_ptr->pixel_depth;
         -:  221:         png_alloc_size_t cb_base;
         -:  222:         int pass;
         -:  223:
-       48:  224:         for (cb_base=0, pass=0; pass<=6; ++pass)
+       96:  224:         for (cb_base=0, pass=0; pass<=6; ++pass)
         -:  225:         {
-       42:  226:            png_uint_32 pw = PNG_PASS_COLS(w, pass);
+       84:  226:            png_uint_32 pw = PNG_PASS_COLS(w, pass);
         -:  227:
-       42:  228:            if (pw > 0)
-       42:  229:               cb_base += (PNG_ROWBYTES(pd, pw)+1) * PNG_PASS_ROWS(h, pass);
+       84:  228:            if (pw > 0)
+       84:  229:               cb_base += (PNG_ROWBYTES(pd, pw)+1) * PNG_PASS_ROWS(h, pass);
         -:  230:         }
         -:  231:
-        6:  232:         return cb_base;
+       12:  232:         return cb_base;
         -:  233:      }
         -:  234:
         -:  235:      else
@@ -250,12 +250,12 @@
         -:  248:    * compressed.)
         -:  249:    */
         -:  250:static void
-        6:  251:optimize_cmf(png_bytep data, png_alloc_size_t data_size)
+        9:  251:optimize_cmf(png_bytep data, png_alloc_size_t data_size)
         -:  252:{
         -:  253:   /* Optimize the CMF field in the zlib stream.  The resultant zlib stream is
         -:  254:    * still compliant to the stream specification.
         -:  255:    */
-        6:  256:   if (data_size <= 16384) /* else windowBits must be 15 */
+        9:  256:   if (data_size <= 16384) /* else windowBits must be 15 */
         -:  257:   {
         3:  258:      unsigned int z_cmf = data[0];  /* zlib compression method and flags */
         -:  259:
@@ -287,15 +287,15 @@
         -:  285:         }
         -:  286:      }
         -:  287:   }
-        6:  288:}
+        9:  288:}
         -:  289:#endif /* WRITE_OPTIMIZE_CMF */
         -:  290:
         -:  291:/* Initialize the compressor for the appropriate type of compression. */
         -:  292:static int
-        6:  293:png_deflate_claim(png_structrp png_ptr, png_uint_32 owner,
+        9:  293:png_deflate_claim(png_structrp png_ptr, png_uint_32 owner,
         -:  294:    png_alloc_size_t data_size)
         -:  295:{
-        6:  296:   if (png_ptr->zowner != 0)
+        9:  296:   if (png_ptr->zowner != 0)
         -:  297:   {
         -:  298:#if defined(PNG_WARNINGS_SUPPORTED) || defined(PNG_ERROR_TEXT_SUPPORTED)
         -:  299:      char msg[64];
@@ -327,23 +327,23 @@
         -:  325:   }
         -:  326:
         -:  327:   {
-        6:  328:      int level = png_ptr->zlib_level;
-        6:  329:      int method = png_ptr->zlib_method;
-        6:  330:      int windowBits = png_ptr->zlib_window_bits;
-        6:  331:      int memLevel = png_ptr->zlib_mem_level;
+        9:  328:      int level = png_ptr->zlib_level;
+        9:  329:      int method = png_ptr->zlib_method;
+        9:  330:      int windowBits = png_ptr->zlib_window_bits;
+        9:  331:      int memLevel = png_ptr->zlib_mem_level;
         -:  332:      int strategy; /* set below */
         -:  333:      int ret; /* zlib return code */
         -:  334:
-        6:  335:      if (owner == png_IDAT)
+        9:  335:      if (owner == png_IDAT)
         -:  336:      {
-        3:  337:         if ((png_ptr->flags & PNG_FLAG_ZLIB_CUSTOM_STRATEGY) != 0)
+        6:  337:         if ((png_ptr->flags & PNG_FLAG_ZLIB_CUSTOM_STRATEGY) != 0)
     #####:  338:            strategy = png_ptr->zlib_strategy;
         -:  339:
-        3:  340:         else if (png_ptr->do_filter != PNG_FILTER_NONE)
+        6:  340:         else if (png_ptr->do_filter != PNG_FILTER_NONE)
         3:  341:            strategy = PNG_Z_DEFAULT_STRATEGY;
         -:  342:
         -:  343:         else
-    #####:  344:            strategy = PNG_Z_DEFAULT_NOFILTER_STRATEGY;
+        3:  344:            strategy = PNG_Z_DEFAULT_NOFILTER_STRATEGY;
         -:  345:      }
         -:  346:
         -:  347:      else
@@ -371,7 +371,7 @@
         -:  369:       * next windowBits size we need to fix up the value later.  (Because even
         -:  370:       * though deflate needs the extra window, inflate does not!)
         -:  371:       */
-        6:  372:      if (data_size <= 16384)
+        9:  372:      if (data_size <= 16384)
         -:  373:      {
         -:  374:         /* IMPLEMENTATION NOTE: this 'half_window_size' stuff is only here to
         -:  375:          * work round a Microsoft Visual C misbehavior which, contrary to C-90,
@@ -388,7 +388,7 @@
         -:  386:      }
         -:  387:
         -:  388:      /* Check against the previous initialized values, if any. */
-        9:  389:      if ((png_ptr->flags & PNG_FLAG_ZSTREAM_INITIALIZED) != 0 &&
+       12:  389:      if ((png_ptr->flags & PNG_FLAG_ZSTREAM_INITIALIZED) != 0 &&
         3:  390:         (png_ptr->zlib_set_level != level ||
     #####:  391:         png_ptr->zlib_set_method != method ||
     #####:  392:         png_ptr->zlib_set_window_bits != windowBits ||
@@ -404,59 +404,59 @@
         -:  402:      /* For safety clear out the input and output pointers (currently zlib
         -:  403:       * doesn't use them on Init, but it might in the future).
         -:  404:       */
-        6:  405:      png_ptr->zstream.next_in = NULL;
-        6:  406:      png_ptr->zstream.avail_in = 0;
-        6:  407:      png_ptr->zstream.next_out = NULL;
-        6:  408:      png_ptr->zstream.avail_out = 0;
+        9:  405:      png_ptr->zstream.next_in = NULL;
+        9:  406:      png_ptr->zstream.avail_in = 0;
+        9:  407:      png_ptr->zstream.next_out = NULL;
+        9:  408:      png_ptr->zstream.avail_out = 0;
         -:  409:
         -:  410:      /* Now initialize if required, setting the new parameters, otherwise just
         -:  411:       * do a simple reset to the previous parameters.
         -:  412:       */
-        6:  413:      if ((png_ptr->flags & PNG_FLAG_ZSTREAM_INITIALIZED) != 0)
+        9:  413:      if ((png_ptr->flags & PNG_FLAG_ZSTREAM_INITIALIZED) != 0)
     #####:  414:         ret = deflateReset(&png_ptr->zstream);
         -:  415:
         -:  416:      else
         -:  417:      {
-        6:  418:         ret = deflateInit2(&png_ptr->zstream, level, method, windowBits,
+        9:  418:         ret = deflateInit2(&png_ptr->zstream, level, method, windowBits,
         -:  419:             memLevel, strategy);
         -:  420:
-        6:  421:         if (ret == Z_OK)
-        6:  422:            png_ptr->flags |= PNG_FLAG_ZSTREAM_INITIALIZED;
+        9:  421:         if (ret == Z_OK)
+        9:  422:            png_ptr->flags |= PNG_FLAG_ZSTREAM_INITIALIZED;
         -:  423:      }
         -:  424:
         -:  425:      /* The return code is from either deflateReset or deflateInit2; they have
         -:  426:       * pretty much the same set of error codes.
         -:  427:       */
-        6:  428:      if (ret == Z_OK)
-        6:  429:         png_ptr->zowner = owner;
+        9:  428:      if (ret == Z_OK)
+        9:  429:         png_ptr->zowner = owner;
         -:  430:
         -:  431:      else
     #####:  432:         png_zstream_error(png_ptr, ret);
         -:  433:
-        6:  434:      return ret;
+        9:  434:      return ret;
         -:  435:   }
         -:  436:}
         -:  437:
         -:  438:/* Clean up (or trim) a linked list of compression buffers. */
         -:  439:void /* PRIVATE */
-        3:  440:png_free_buffer_list(png_structrp png_ptr, png_compression_bufferp *listp)
+        6:  440:png_free_buffer_list(png_structrp png_ptr, png_compression_bufferp *listp)
         -:  441:{
-        3:  442:   png_compression_bufferp list = *listp;
+        6:  442:   png_compression_bufferp list = *listp;
         -:  443:
-        3:  444:   if (list != NULL)
+        6:  444:   if (list != NULL)
         -:  445:   {
-        3:  446:      *listp = NULL;
+        6:  446:      *listp = NULL;
         -:  447:
         -:  448:      do
         -:  449:      {
-        3:  450:         png_compression_bufferp next = list->next;
+        6:  450:         png_compression_bufferp next = list->next;
         -:  451:
-        3:  452:         png_free(png_ptr, list);
-        3:  453:         list = next;
+        6:  452:         png_free(png_ptr, list);
+        6:  453:         list = next;
         -:  454:      }
-        3:  455:      while (list != NULL);
+        6:  455:      while (list != NULL);
         -:  456:   }
-        3:  457:}
+        6:  457:}
         -:  458:
         -:  459:#ifdef PNG_WRITE_COMPRESSED_TEXT_SUPPORTED
         -:  460:/* This pair of functions encapsulates the operation of (a) compressing a
@@ -672,7 +672,7 @@
         -:  670: * information being correct.
         -:  671: */
         -:  672:void /* PRIVATE */
-        3:  673:png_write_IHDR(png_structrp png_ptr, png_uint_32 width, png_uint_32 height,
+        6:  673:png_write_IHDR(png_structrp png_ptr, png_uint_32 width, png_uint_32 height,
         -:  674:    int bit_depth, int color_type, int compression_type, int filter_type,
         -:  675:    int interlace_type)
         -:  676:{
@@ -682,7 +682,7 @@
         -:  680:   png_debug(1, "in png_write_IHDR");
         -:  681:
         -:  682:   /* Check that we have valid input data from the application info */
-        3:  683:   switch (color_type)
+        6:  683:   switch (color_type)
         -:  684:   {
         -:  685:      case PNG_COLOR_TYPE_GRAY:
     #####:  686:         switch (bit_depth)
@@ -714,19 +714,19 @@
     #####:  712:         break;
         -:  713:
         -:  714:      case PNG_COLOR_TYPE_PALETTE:
-    #####:  715:         switch (bit_depth)
+        3:  715:         switch (bit_depth)
         -:  716:         {
         -:  717:            case 1:
         -:  718:            case 2:
         -:  719:            case 4:
         -:  720:            case 8:
-    #####:  721:               png_ptr->channels = 1;
-    #####:  722:               break;
+        3:  721:               png_ptr->channels = 1;
+        3:  722:               break;
         -:  723:
         -:  724:            default:
     #####:  725:               png_error(png_ptr, "Invalid bit depth for paletted image");
         -:  726:         }
-    #####:  727:         break;
+        3:  727:         break;
         -:  728:
         -:  729:      case PNG_COLOR_TYPE_GRAY_ALPHA:
     #####:  730:         is_invalid_depth = (bit_depth != 8);
@@ -754,7 +754,7 @@
     #####:  752:         png_error(png_ptr, "Invalid image color type specified");
         -:  753:   }
         -:  754:
-        3:  755:   if (compression_type != PNG_COMPRESSION_TYPE_BASE)
+        6:  755:   if (compression_type != PNG_COMPRESSION_TYPE_BASE)
         -:  756:   {
     #####:  757:      png_warning(png_ptr, "Invalid compression type specified");
     #####:  758:      compression_type = PNG_COMPRESSION_TYPE_BASE;
@@ -769,13 +769,13 @@
         -:  767:    * 4. The filter_method is 64 and
         -:  768:    * 5. The color_type is RGB or RGBA
         -:  769:    */
-        3:  770:   if (
+        6:  770:   if (
         -:  771:#ifdef PNG_MNG_FEATURES_SUPPORTED
-        3:  772:       !((png_ptr->mng_features_permitted & PNG_FLAG_MNG_FILTER_64) != 0 &&
+        6:  772:       !((png_ptr->mng_features_permitted & PNG_FLAG_MNG_FILTER_64) != 0 &&
     #####:  773:       ((png_ptr->mode & PNG_HAVE_PNG_SIGNATURE) == 0) &&
     #####:  774:       (color_type == PNG_COLOR_TYPE_RGB ||
         -:  775:        color_type == PNG_COLOR_TYPE_RGB_ALPHA) &&
-        3:  776:       (filter_type == PNG_INTRAPIXEL_DIFFERENCING)) &&
+        6:  776:       (filter_type == PNG_INTRAPIXEL_DIFFERENCING)) &&
         -:  777:#endif
         -:  778:       filter_type != PNG_FILTER_TYPE_BASE)
         -:  779:   {
@@ -784,7 +784,7 @@
         -:  782:   }
         -:  783:
         -:  784:#ifdef PNG_WRITE_INTERLACING_SUPPORTED
-        3:  785:   if (interlace_type != PNG_INTERLACE_NONE &&
+        6:  785:   if (interlace_type != PNG_INTERLACE_NONE &&
         -:  786:       interlace_type != PNG_INTERLACE_ADAM7)
         -:  787:   {
     #####:  788:      png_warning(png_ptr, "Invalid interlace type specified");
@@ -795,54 +795,54 @@
         -:  793:#endif
         -:  794:
         -:  795:   /* Save the relevant information */
-        3:  796:   png_ptr->bit_depth = (png_byte)bit_depth;
-        3:  797:   png_ptr->color_type = (png_byte)color_type;
-        3:  798:   png_ptr->interlaced = (png_byte)interlace_type;
+        6:  796:   png_ptr->bit_depth = (png_byte)bit_depth;
+        6:  797:   png_ptr->color_type = (png_byte)color_type;
+        6:  798:   png_ptr->interlaced = (png_byte)interlace_type;
         -:  799:#ifdef PNG_MNG_FEATURES_SUPPORTED
-        3:  800:   png_ptr->filter_type = (png_byte)filter_type;
+        6:  800:   png_ptr->filter_type = (png_byte)filter_type;
         -:  801:#endif
-        3:  802:   png_ptr->compression_type = (png_byte)compression_type;
-        3:  803:   png_ptr->width = width;
-        3:  804:   png_ptr->height = height;
+        6:  802:   png_ptr->compression_type = (png_byte)compression_type;
+        6:  803:   png_ptr->width = width;
+        6:  804:   png_ptr->height = height;
         -:  805:
-        3:  806:   png_ptr->pixel_depth = (png_byte)(bit_depth * png_ptr->channels);
-        3:  807:   png_ptr->rowbytes = PNG_ROWBYTES(png_ptr->pixel_depth, width);
+        6:  806:   png_ptr->pixel_depth = (png_byte)(bit_depth * png_ptr->channels);
+        6:  807:   png_ptr->rowbytes = PNG_ROWBYTES(png_ptr->pixel_depth, width);
         -:  808:   /* Set the usr info, so any transformations can modify it */
-        3:  809:   png_ptr->usr_width = png_ptr->width;
-        3:  810:   png_ptr->usr_bit_depth = png_ptr->bit_depth;
-        3:  811:   png_ptr->usr_channels = png_ptr->channels;
+        6:  809:   png_ptr->usr_width = png_ptr->width;
+        6:  810:   png_ptr->usr_bit_depth = png_ptr->bit_depth;
+        6:  811:   png_ptr->usr_channels = png_ptr->channels;
         -:  812:
         -:  813:   /* Pack the header information into the buffer */
-        3:  814:   png_save_uint_32(buf, width);
-        3:  815:   png_save_uint_32(buf + 4, height);
-        3:  816:   buf[8] = (png_byte)bit_depth;
-        3:  817:   buf[9] = (png_byte)color_type;
-        3:  818:   buf[10] = (png_byte)compression_type;
-        3:  819:   buf[11] = (png_byte)filter_type;
-        3:  820:   buf[12] = (png_byte)interlace_type;
+        6:  814:   png_save_uint_32(buf, width);
+        6:  815:   png_save_uint_32(buf + 4, height);
+        6:  816:   buf[8] = (png_byte)bit_depth;
+        6:  817:   buf[9] = (png_byte)color_type;
+        6:  818:   buf[10] = (png_byte)compression_type;
+        6:  819:   buf[11] = (png_byte)filter_type;
+        6:  820:   buf[12] = (png_byte)interlace_type;
         -:  821:
         -:  822:   /* Write the chunk */
-        3:  823:   png_write_complete_chunk(png_ptr, png_IHDR, buf, (png_size_t)13);
+        6:  823:   png_write_complete_chunk(png_ptr, png_IHDR, buf, (png_size_t)13);
         -:  824:
-        3:  825:   if ((png_ptr->do_filter) == PNG_NO_FILTERS)
+        6:  825:   if ((png_ptr->do_filter) == PNG_NO_FILTERS)
         -:  826:   {
-        6:  827:      if (png_ptr->color_type == PNG_COLOR_TYPE_PALETTE ||
+        9:  827:      if (png_ptr->color_type == PNG_COLOR_TYPE_PALETTE ||
         3:  828:          png_ptr->bit_depth < 8)
-    #####:  829:         png_ptr->do_filter = PNG_FILTER_NONE;
+        3:  829:         png_ptr->do_filter = PNG_FILTER_NONE;
         -:  830:
         -:  831:      else
         3:  832:         png_ptr->do_filter = PNG_ALL_FILTERS;
         -:  833:   }
         -:  834:
-        3:  835:   png_ptr->mode = PNG_HAVE_IHDR; /* not READY_FOR_ZTXT */
-        3:  836:}
+        6:  835:   png_ptr->mode = PNG_HAVE_IHDR; /* not READY_FOR_ZTXT */
+        6:  836:}
         -:  837:
         -:  838:/* Write the palette.  We are careful not to trust png_color to be in the
         -:  839: * correct order for PNG, so people can redefine it to any convenient
         -:  840: * structure.
         -:  841: */
         -:  842:void /* PRIVATE */
-    #####:  843:png_write_PLTE(png_structrp png_ptr, png_const_colorp palette,
+        3:  843:png_write_PLTE(png_structrp png_ptr, png_const_colorp palette,
         -:  844:    png_uint_32 num_pal)
         -:  845:{
         -:  846:   png_uint_32 max_palette_length, i;
@@ -851,14 +851,14 @@
         -:  849:
         -:  850:   png_debug(1, "in png_write_PLTE");
         -:  851:
-    #####:  852:   max_palette_length = (png_ptr->color_type == PNG_COLOR_TYPE_PALETTE) ?
-    #####:  853:      (1 << png_ptr->bit_depth) : PNG_MAX_PALETTE_LENGTH;
+        6:  852:   max_palette_length = (png_ptr->color_type == PNG_COLOR_TYPE_PALETTE) ?
+        3:  853:      (1 << png_ptr->bit_depth) : PNG_MAX_PALETTE_LENGTH;
         -:  854:
-    #####:  855:   if ((
+        3:  855:   if ((
         -:  856:#ifdef PNG_MNG_FEATURES_SUPPORTED
-    #####:  857:       (png_ptr->mng_features_permitted & PNG_FLAG_MNG_EMPTY_PLTE) == 0 &&
+        6:  857:       (png_ptr->mng_features_permitted & PNG_FLAG_MNG_EMPTY_PLTE) == 0 &&
         -:  858:#endif
-    #####:  859:       num_pal == 0) || num_pal > max_palette_length)
+        3:  859:       num_pal == 0) || num_pal > max_palette_length)
         -:  860:   {
     #####:  861:      if (png_ptr->color_type == PNG_COLOR_TYPE_PALETTE)
         -:  862:      {
@@ -872,7 +872,7 @@
         -:  870:      }
         -:  871:   }
         -:  872:
-    #####:  873:   if ((png_ptr->color_type & PNG_COLOR_MASK_COLOR) == 0)
+        3:  873:   if ((png_ptr->color_type & PNG_COLOR_MASK_COLOR) == 0)
         -:  874:   {
     #####:  875:      png_warning(png_ptr,
         -:  876:          "Ignoring request to write a PLTE chunk in grayscale PNG");
@@ -880,18 +880,18 @@
     #####:  878:      return;
         -:  879:   }
         -:  880:
-    #####:  881:   png_ptr->num_palette = (png_uint_16)num_pal;
+        3:  881:   png_ptr->num_palette = (png_uint_16)num_pal;
         -:  882:   png_debug1(3, "num_palette = %d", png_ptr->num_palette);
         -:  883:
-    #####:  884:   png_write_chunk_header(png_ptr, png_PLTE, (png_uint_32)(num_pal * 3));
+        3:  884:   png_write_chunk_header(png_ptr, png_PLTE, (png_uint_32)(num_pal * 3));
         -:  885:#ifdef PNG_POINTER_INDEXING_SUPPORTED
         -:  886:
-    #####:  887:   for (i = 0, pal_ptr = palette; i < num_pal; i++, pal_ptr++)
+      771:  887:   for (i = 0, pal_ptr = palette; i < num_pal; i++, pal_ptr++)
         -:  888:   {
-    #####:  889:      buf[0] = pal_ptr->red;
-    #####:  890:      buf[1] = pal_ptr->green;
-    #####:  891:      buf[2] = pal_ptr->blue;
-    #####:  892:      png_write_chunk_data(png_ptr, buf, (png_size_t)3);
+      768:  889:      buf[0] = pal_ptr->red;
+      768:  890:      buf[1] = pal_ptr->green;
+      768:  891:      buf[2] = pal_ptr->blue;
+      768:  892:      png_write_chunk_data(png_ptr, buf, (png_size_t)3);
         -:  893:   }
         -:  894:
         -:  895:#else
@@ -909,8 +909,8 @@
         -:  907:   }
         -:  908:
         -:  909:#endif
-    #####:  910:   png_write_chunk_end(png_ptr);
-    #####:  911:   png_ptr->mode |= PNG_HAVE_PLTE;
+        3:  910:   png_write_chunk_end(png_ptr);
+        3:  911:   png_ptr->mode |= PNG_HAVE_PLTE;
         -:  912:}
         -:  913:
         -:  914:/* This is similar to png_text_compress, above, except that it does not require
@@ -931,135 +931,135 @@
         -:  929: * checks on the 'mode' flags while doing this.
         -:  930: */
         -:  931:void /* PRIVATE */
-      396:  932:png_compress_IDAT(png_structrp png_ptr, png_const_bytep input,
+     1245:  932:png_compress_IDAT(png_structrp png_ptr, png_const_bytep input,
         -:  933:    png_alloc_size_t input_len, int flush)
         -:  934:{
-      396:  935:   if (png_ptr->zowner != png_IDAT)
+     1245:  935:   if (png_ptr->zowner != png_IDAT)
         -:  936:   {
         -:  937:      /* First time.   Ensure we have a temporary buffer for compression and
         -:  938:       * trim the buffer list if it has more than one entry to free memory.
         -:  939:       * If 'WRITE_COMPRESSED_TEXT' is not set the list will never have been
         -:  940:       * created at this point, but the check here is quick and safe.
         -:  941:       */
-        3:  942:      if (png_ptr->zbuffer_list == NULL)
+        6:  942:      if (png_ptr->zbuffer_list == NULL)
         -:  943:      {
-        3:  944:         png_ptr->zbuffer_list = png_voidcast(png_compression_bufferp,
+        6:  944:         png_ptr->zbuffer_list = png_voidcast(png_compression_bufferp,
         -:  945:             png_malloc(png_ptr, PNG_COMPRESSION_BUFFER_SIZE(png_ptr)));
-        3:  946:         png_ptr->zbuffer_list->next = NULL;
+        6:  946:         png_ptr->zbuffer_list->next = NULL;
         -:  947:      }
         -:  948:
         -:  949:      else
     #####:  950:         png_free_buffer_list(png_ptr, &png_ptr->zbuffer_list->next);
         -:  951:
         -:  952:      /* It is a terminal error if we can't claim the zstream. */
-        3:  953:      if (png_deflate_claim(png_ptr, png_IDAT, png_image_size(png_ptr)) != Z_OK)
+        6:  953:      if (png_deflate_claim(png_ptr, png_IDAT, png_image_size(png_ptr)) != Z_OK)
     #####:  954:         png_error(png_ptr, png_ptr->zstream.msg);
         -:  955:
         -:  956:      /* The output state is maintained in png_ptr->zstream, so it must be
         -:  957:       * initialized here after the claim.
         -:  958:       */
-        3:  959:      png_ptr->zstream.next_out = png_ptr->zbuffer_list->output;
-        3:  960:      png_ptr->zstream.avail_out = png_ptr->zbuffer_size;
+        6:  959:      png_ptr->zstream.next_out = png_ptr->zbuffer_list->output;
+        6:  960:      png_ptr->zstream.avail_out = png_ptr->zbuffer_size;
         -:  961:   }
         -:  962:
         -:  963:   /* Now loop reading and writing until all the input is consumed or an error
         -:  964:    * terminates the operation.  The _out values are maintained across calls to
         -:  965:    * this function, but the input must be reset each time.
         -:  966:    */
-      396:  967:   png_ptr->zstream.next_in = PNGZ_INPUT_CAST(input);
-      396:  968:   png_ptr->zstream.avail_in = 0; /* set below */
+     1245:  967:   png_ptr->zstream.next_in = PNGZ_INPUT_CAST(input);
+     1245:  968:   png_ptr->zstream.avail_in = 0; /* set below */
         -:  969:   for (;;)
         -:  970:   {
         -:  971:      int ret;
         -:  972:
         -:  973:      /* INPUT: from the row data */
-      396:  974:      uInt avail = ZLIB_IO_MAX;
+     1248:  974:      uInt avail = ZLIB_IO_MAX;
         -:  975:
-      396:  976:      if (avail > input_len)
-      396:  977:         avail = (uInt)input_len; /* safe because of the check */
+     1248:  976:      if (avail > input_len)
+     1248:  977:         avail = (uInt)input_len; /* safe because of the check */
         -:  978:
-      396:  979:      png_ptr->zstream.avail_in = avail;
-      396:  980:      input_len -= avail;
+     1248:  979:      png_ptr->zstream.avail_in = avail;
+     1248:  980:      input_len -= avail;
         -:  981:
-      396:  982:      ret = deflate(&png_ptr->zstream, input_len > 0 ? Z_NO_FLUSH : flush);
+     1248:  982:      ret = deflate(&png_ptr->zstream, input_len > 0 ? Z_NO_FLUSH : flush);
         -:  983:
         -:  984:      /* Include as-yet unconsumed input */
-      396:  985:      input_len += png_ptr->zstream.avail_in;
-      396:  986:      png_ptr->zstream.avail_in = 0;
+     1248:  985:      input_len += png_ptr->zstream.avail_in;
+     1248:  986:      png_ptr->zstream.avail_in = 0;
         -:  987:
         -:  988:      /* OUTPUT: write complete IDAT chunks when avail_out drops to zero. Note
         -:  989:       * that these two zstream fields are preserved across the calls, therefore
         -:  990:       * there is no need to set these up on entry to the loop.
         -:  991:       */
-      396:  992:      if (png_ptr->zstream.avail_out == 0)
+     1248:  992:      if (png_ptr->zstream.avail_out == 0)
         -:  993:      {
-    #####:  994:         png_bytep data = png_ptr->zbuffer_list->output;
-    #####:  995:         uInt size = png_ptr->zbuffer_size;
+        3:  994:         png_bytep data = png_ptr->zbuffer_list->output;
+        3:  995:         uInt size = png_ptr->zbuffer_size;
         -:  996:
         -:  997:         /* Write an IDAT containing the data then reset the buffer.  The
         -:  998:          * first IDAT may need deflate header optimization.
         -:  999:          */
         -: 1000:#ifdef PNG_WRITE_OPTIMIZE_CMF_SUPPORTED
-    #####: 1001:            if ((png_ptr->mode & PNG_HAVE_IDAT) == 0 &&
-    #####: 1002:                png_ptr->compression_type == PNG_COMPRESSION_TYPE_BASE)
-    #####: 1003:               optimize_cmf(data, png_image_size(png_ptr));
+        6: 1001:            if ((png_ptr->mode & PNG_HAVE_IDAT) == 0 &&
+        3: 1002:                png_ptr->compression_type == PNG_COMPRESSION_TYPE_BASE)
+        3: 1003:               optimize_cmf(data, png_image_size(png_ptr));
         -: 1004:#endif
         -: 1005:
-    #####: 1006:         if (size > 0)
-    #####: 1007:            png_write_complete_chunk(png_ptr, png_IDAT, data, size);
-    #####: 1008:         png_ptr->mode |= PNG_HAVE_IDAT;
+        3: 1006:         if (size > 0)
+        3: 1007:            png_write_complete_chunk(png_ptr, png_IDAT, data, size);
+        3: 1008:         png_ptr->mode |= PNG_HAVE_IDAT;
         -: 1009:
-    #####: 1010:         png_ptr->zstream.next_out = data;
-    #####: 1011:         png_ptr->zstream.avail_out = size;
+        3: 1010:         png_ptr->zstream.next_out = data;
+        3: 1011:         png_ptr->zstream.avail_out = size;
         -: 1012:
         -: 1013:         /* For SYNC_FLUSH or FINISH it is essential to keep calling zlib with
         -: 1014:          * the same flush parameter until it has finished output, for NO_FLUSH
         -: 1015:          * it doesn't matter.
         -: 1016:          */
-    #####: 1017:         if (ret == Z_OK && flush != Z_NO_FLUSH)
-    #####: 1018:            continue;
+        3: 1017:         if (ret == Z_OK && flush != Z_NO_FLUSH)
+        3: 1018:            continue;
         -: 1019:      }
         -: 1020:
         -: 1021:      /* The order of these checks doesn't matter much; it just affects which
         -: 1022:       * possible error might be detected if multiple things go wrong at once.
         -: 1023:       */
-      396: 1024:      if (ret == Z_OK) /* most likely return code! */
+     1245: 1024:      if (ret == Z_OK) /* most likely return code! */
         -: 1025:      {
         -: 1026:         /* If all the input has been consumed then just return.  If Z_FINISH
         -: 1027:          * was used as the flush parameter something has gone wrong if we get
         -: 1028:          * here.
         -: 1029:          */
-      393: 1030:         if (input_len == 0)
+     1239: 1030:         if (input_len == 0)
         -: 1031:         {
-      393: 1032:            if (flush == Z_FINISH)
+     1239: 1032:            if (flush == Z_FINISH)
     #####: 1033:               png_error(png_ptr, "Z_OK on Z_FINISH with output space");
         -: 1034:
-      393: 1035:            return;
+     1239: 1035:            return;
         -: 1036:         }
         -: 1037:      }
         -: 1038:
-        3: 1039:      else if (ret == Z_STREAM_END && flush == Z_FINISH)
+        6: 1039:      else if (ret == Z_STREAM_END && flush == Z_FINISH)
         -: 1040:      {
         -: 1041:         /* This is the end of the IDAT data; any pending output must be
         -: 1042:          * flushed.  For small PNG files we may still be at the beginning.
         -: 1043:          */
-        3: 1044:         png_bytep data = png_ptr->zbuffer_list->output;
-        3: 1045:         uInt size = png_ptr->zbuffer_size - png_ptr->zstream.avail_out;
+        6: 1044:         png_bytep data = png_ptr->zbuffer_list->output;
+        6: 1045:         uInt size = png_ptr->zbuffer_size - png_ptr->zstream.avail_out;
         -: 1046:
         -: 1047:#ifdef PNG_WRITE_OPTIMIZE_CMF_SUPPORTED
-        6: 1048:         if ((png_ptr->mode & PNG_HAVE_IDAT) == 0 &&
+        9: 1048:         if ((png_ptr->mode & PNG_HAVE_IDAT) == 0 &&
         3: 1049:             png_ptr->compression_type == PNG_COMPRESSION_TYPE_BASE)
         3: 1050:            optimize_cmf(data, png_image_size(png_ptr));
         -: 1051:#endif
         -: 1052:
-        3: 1053:         if (size > 0)
-        3: 1054:            png_write_complete_chunk(png_ptr, png_IDAT, data, size);
-        3: 1055:         png_ptr->zstream.avail_out = 0;
-        3: 1056:         png_ptr->zstream.next_out = NULL;
-        3: 1057:         png_ptr->mode |= PNG_HAVE_IDAT | PNG_AFTER_IDAT;
+        6: 1053:         if (size > 0)
+        6: 1054:            png_write_complete_chunk(png_ptr, png_IDAT, data, size);
+        6: 1055:         png_ptr->zstream.avail_out = 0;
+        6: 1056:         png_ptr->zstream.next_out = NULL;
+        6: 1057:         png_ptr->mode |= PNG_HAVE_IDAT | PNG_AFTER_IDAT;
         -: 1058:
-        3: 1059:         png_ptr->zowner = 0; /* Release the stream */
-        3: 1060:         return;
+        6: 1059:         png_ptr->zowner = 0; /* Release the stream */
+        6: 1060:         return;
         -: 1061:      }
         -: 1062:
         -: 1063:      else
@@ -1068,32 +1068,32 @@
     #####: 1066:         png_zstream_error(png_ptr, ret);
     #####: 1067:         png_error(png_ptr, png_ptr->zstream.msg);
         -: 1068:      }
-    #####: 1069:   }
+        3: 1069:   }
         -: 1070:}
         -: 1071:
         -: 1072:/* Write an IEND chunk */
         -: 1073:void /* PRIVATE */
-        3: 1074:png_write_IEND(png_structrp png_ptr)
+        6: 1074:png_write_IEND(png_structrp png_ptr)
         -: 1075:{
         -: 1076:   png_debug(1, "in png_write_IEND");
         -: 1077:
-        3: 1078:   png_write_complete_chunk(png_ptr, png_IEND, NULL, (png_size_t)0);
-        3: 1079:   png_ptr->mode |= PNG_HAVE_IEND;
-        3: 1080:}
+        6: 1078:   png_write_complete_chunk(png_ptr, png_IEND, NULL, (png_size_t)0);
+        6: 1079:   png_ptr->mode |= PNG_HAVE_IEND;
+        6: 1080:}
         -: 1081:
         -: 1082:#ifdef PNG_WRITE_gAMA_SUPPORTED
         -: 1083:/* Write a gAMA chunk */
         -: 1084:void /* PRIVATE */
-        3: 1085:png_write_gAMA_fixed(png_structrp png_ptr, png_fixed_point file_gamma)
+        6: 1085:png_write_gAMA_fixed(png_structrp png_ptr, png_fixed_point file_gamma)
         -: 1086:{
         -: 1087:   png_byte buf[4];
         -: 1088:
         -: 1089:   png_debug(1, "in png_write_gAMA");
         -: 1090:
         -: 1091:   /* file_gamma is saved in 1/100,000ths */
-        3: 1092:   png_save_uint_32(buf, (png_uint_32)file_gamma);
-        3: 1093:   png_write_complete_chunk(png_ptr, png_gAMA, buf, (png_size_t)4);
-        3: 1094:}
+        6: 1092:   png_save_uint_32(buf, (png_uint_32)file_gamma);
+        6: 1093:   png_write_complete_chunk(png_ptr, png_gAMA, buf, (png_size_t)4);
+        6: 1094:}
         -: 1095:#endif
         -: 1096:
         -: 1097:#ifdef PNG_WRITE_sRGB_SUPPORTED
@@ -1349,16 +1349,16 @@
         -: 1347:#ifdef PNG_WRITE_tRNS_SUPPORTED
         -: 1348:/* Write the tRNS chunk */
         -: 1349:void /* PRIVATE */
-    #####: 1350:png_write_tRNS(png_structrp png_ptr, png_const_bytep trans_alpha,
+        3: 1350:png_write_tRNS(png_structrp png_ptr, png_const_bytep trans_alpha,
         -: 1351:    png_const_color_16p tran, int num_trans, int color_type)
         -: 1352:{
         -: 1353:   png_byte buf[6];
         -: 1354:
         -: 1355:   png_debug(1, "in png_write_tRNS");
         -: 1356:
-    #####: 1357:   if (color_type == PNG_COLOR_TYPE_PALETTE)
+        3: 1357:   if (color_type == PNG_COLOR_TYPE_PALETTE)
         -: 1358:   {
-    #####: 1359:      if (num_trans <= 0 || num_trans > (int)png_ptr->num_palette)
+        3: 1359:      if (num_trans <= 0 || num_trans > (int)png_ptr->num_palette)
         -: 1360:      {
     #####: 1361:         png_app_warning(png_ptr,
         -: 1362:             "Invalid number of transparent colors specified");
@@ -1366,7 +1366,7 @@
         -: 1364:      }
         -: 1365:
         -: 1366:      /* Write the chunk out as it is */
-    #####: 1367:      png_write_complete_chunk(png_ptr, png_tRNS, trans_alpha,
+        3: 1367:      png_write_complete_chunk(png_ptr, png_tRNS, trans_alpha,
         -: 1368:          (png_size_t)num_trans);
         -: 1369:   }
         -: 1370:
@@ -1891,7 +1891,7 @@
         -: 1889:
         -: 1890:/* Initializes the row writing capability of libpng */
         -: 1891:void /* PRIVATE */
-        3: 1892:png_write_start_row(png_structrp png_ptr)
+        6: 1892:png_write_start_row(png_structrp png_ptr)
         -: 1893:{
         -: 1894:#ifdef PNG_WRITE_INTERLACING_SUPPORTED
         -: 1895:   /* Arrays to facilitate easy interlacing - use pass (0 - 6) as index */
@@ -1918,33 +1918,33 @@
         -: 1916:
         -: 1917:   png_debug(1, "in png_write_start_row");
         -: 1918:
-        3: 1919:   usr_pixel_depth = png_ptr->usr_channels * png_ptr->usr_bit_depth;
-        3: 1920:   buf_size = PNG_ROWBYTES(usr_pixel_depth, png_ptr->width) + 1;
+        6: 1919:   usr_pixel_depth = png_ptr->usr_channels * png_ptr->usr_bit_depth;
+        6: 1920:   buf_size = PNG_ROWBYTES(usr_pixel_depth, png_ptr->width) + 1;
         -: 1921:
         -: 1922:   /* 1.5.6: added to allow checking in the row write code. */
-        3: 1923:   png_ptr->transformed_pixel_depth = png_ptr->pixel_depth;
-        3: 1924:   png_ptr->maximum_pixel_depth = (png_byte)usr_pixel_depth;
+        6: 1923:   png_ptr->transformed_pixel_depth = png_ptr->pixel_depth;
+        6: 1924:   png_ptr->maximum_pixel_depth = (png_byte)usr_pixel_depth;
         -: 1925:
         -: 1926:   /* Set up row buffer */
-        3: 1927:   png_ptr->row_buf = png_voidcast(png_bytep, png_malloc(png_ptr, buf_size));
+        6: 1927:   png_ptr->row_buf = png_voidcast(png_bytep, png_malloc(png_ptr, buf_size));
         -: 1928:
-        3: 1929:   png_ptr->row_buf[0] = PNG_FILTER_VALUE_NONE;
+        6: 1929:   png_ptr->row_buf[0] = PNG_FILTER_VALUE_NONE;
         -: 1930:
         -: 1931:#ifdef PNG_WRITE_FILTER_SUPPORTED
-        3: 1932:   filters = png_ptr->do_filter;
+        6: 1932:   filters = png_ptr->do_filter;
         -: 1933:
-        3: 1934:   if (png_ptr->height == 1)
+        6: 1934:   if (png_ptr->height == 1)
     #####: 1935:      filters &= 0xff & ~(PNG_FILTER_UP|PNG_FILTER_AVG|PNG_FILTER_PAETH);
         -: 1936:
-        3: 1937:   if (png_ptr->width == 1)
+        6: 1937:   if (png_ptr->width == 1)
     #####: 1938:      filters &= 0xff & ~(PNG_FILTER_SUB|PNG_FILTER_AVG|PNG_FILTER_PAETH);
         -: 1939:
-        3: 1940:   if (filters == 0)
+        6: 1940:   if (filters == 0)
     #####: 1941:      filters = PNG_FILTER_NONE;
         -: 1942:
-        3: 1943:   png_ptr->do_filter = filters;
+        6: 1943:   png_ptr->do_filter = filters;
         -: 1944:
-        3: 1945:   if (((filters & (PNG_FILTER_SUB | PNG_FILTER_UP | PNG_FILTER_AVG |
+        6: 1945:   if (((filters & (PNG_FILTER_SUB | PNG_FILTER_UP | PNG_FILTER_AVG |
         3: 1946:       PNG_FILTER_PAETH)) != 0) && png_ptr->try_row == NULL)
         -: 1947:   {
         3: 1948:      int num_filters = 0;
@@ -1971,16 +1971,16 @@
         -: 1969:   /* We only need to keep the previous row if we are using one of the following
         -: 1970:    * filters.
         -: 1971:    */
-        3: 1972:   if ((filters & (PNG_FILTER_AVG | PNG_FILTER_UP | PNG_FILTER_PAETH)) != 0)
+        6: 1972:   if ((filters & (PNG_FILTER_AVG | PNG_FILTER_UP | PNG_FILTER_PAETH)) != 0)
         3: 1973:      png_ptr->prev_row = png_voidcast(png_bytep,
         -: 1974:          png_calloc(png_ptr, buf_size));
         -: 1975:#endif /* WRITE_FILTER */
         -: 1976:
         -: 1977:#ifdef PNG_WRITE_INTERLACING_SUPPORTED
         -: 1978:   /* If interlaced, we need to set up width and height of pass */
-        3: 1979:   if (png_ptr->interlaced != 0)
+        6: 1979:   if (png_ptr->interlaced != 0)
         -: 1980:   {
-        3: 1981:      if ((png_ptr->transformations & PNG_INTERLACE) == 0)
+        6: 1981:      if ((png_ptr->transformations & PNG_INTERLACE) == 0)
         -: 1982:      {
     #####: 1983:         png_ptr->num_rows = (png_ptr->height + png_pass_yinc[0] - 1 -
     #####: 1984:             png_pass_ystart[0]) / png_pass_yinc[0];
@@ -1991,8 +1991,8 @@
         -: 1989:
         -: 1990:      else
         -: 1991:      {
-        3: 1992:         png_ptr->num_rows = png_ptr->height;
-        3: 1993:         png_ptr->usr_width = png_ptr->width;
+        6: 1992:         png_ptr->num_rows = png_ptr->height;
+        6: 1993:         png_ptr->usr_width = png_ptr->width;
         -: 1994:      }
         -: 1995:   }
         -: 1996:
@@ -2002,11 +2002,11 @@
     #####: 2000:      png_ptr->num_rows = png_ptr->height;
     #####: 2001:      png_ptr->usr_width = png_ptr->width;
         -: 2002:   }
-        3: 2003:}
+        6: 2003:}
         -: 2004:
         -: 2005:/* Internal use only.  Called when finished processing a row of data. */
         -: 2006:void /* PRIVATE */
-     1449: 2007:png_write_finish_row(png_structrp png_ptr)
+     4599: 2007:png_write_finish_row(png_structrp png_ptr)
         -: 2008:{
         -: 2009:#ifdef PNG_WRITE_INTERLACING_SUPPORTED
         -: 2010:   /* Arrays to facilitate easy interlacing - use pass (0 - 6) as index */
@@ -2027,20 +2027,20 @@
         -: 2025:   png_debug(1, "in png_write_finish_row");
         -: 2026:
         -: 2027:   /* Next row */
-     1449: 2028:   png_ptr->row_number++;
+     4599: 2028:   png_ptr->row_number++;
         -: 2029:
         -: 2030:   /* See if we are done */
-     1449: 2031:   if (png_ptr->row_number < png_ptr->num_rows)
-     1428: 2032:      return;
+     4599: 2031:   if (png_ptr->row_number < png_ptr->num_rows)
+     4557: 2032:      return;
         -: 2033:
         -: 2034:#ifdef PNG_WRITE_INTERLACING_SUPPORTED
         -: 2035:   /* If interlaced, go to next pass */
-       21: 2036:   if (png_ptr->interlaced != 0)
+       42: 2036:   if (png_ptr->interlaced != 0)
         -: 2037:   {
-       21: 2038:      png_ptr->row_number = 0;
-       21: 2039:      if ((png_ptr->transformations & PNG_INTERLACE) != 0)
+       42: 2038:      png_ptr->row_number = 0;
+       42: 2039:      if ((png_ptr->transformations & PNG_INTERLACE) != 0)
         -: 2040:      {
-       21: 2041:         png_ptr->pass++;
+       42: 2041:         png_ptr->pass++;
         -: 2042:      }
         -: 2043:
         -: 2044:      else
@@ -2071,21 +2071,21 @@
         -: 2069:      }
         -: 2070:
         -: 2071:      /* Reset the row above the image for the next pass */
-       21: 2072:      if (png_ptr->pass < 7)
+       42: 2072:      if (png_ptr->pass < 7)
         -: 2073:      {
-       18: 2074:         if (png_ptr->prev_row != NULL)
+       36: 2074:         if (png_ptr->prev_row != NULL)
        36: 2075:            memset(png_ptr->prev_row, 0,
        36: 2076:                (png_size_t)(PNG_ROWBYTES(png_ptr->usr_channels*
         -: 2077:                png_ptr->usr_bit_depth, png_ptr->width)) + 1);
         -: 2078:
-       18: 2079:         return;
+       36: 2079:         return;
         -: 2080:      }
         -: 2081:   }
         -: 2082:#endif
         -: 2083:
         -: 2084:   /* If we get here, we've just written the last row, so we need
         -: 2085:      to flush the compressor */
-        3: 2086:   png_compress_IDAT(png_ptr, NULL, 0, Z_FINISH);
+        6: 2086:   png_compress_IDAT(png_ptr, NULL, 0, Z_FINISH);
         -: 2087:}
         -: 2088:
         -: 2089:#ifdef PNG_WRITE_INTERLACING_SUPPORTED
@@ -2097,7 +2097,7 @@
         -: 2095: * See the default: case for the easiest code to understand.
         -: 2096: */
         -: 2097:void /* PRIVATE */
-      291: 2098:png_do_write_interlace(png_row_infop row_info, png_bytep row, int pass)
+      912: 2098:png_do_write_interlace(png_row_infop row_info, png_bytep row, int pass)
         -: 2099:{
         -: 2100:   /* Arrays to facilitate easy interlacing - use pass (0 - 6) as index */
         -: 2101:
@@ -2110,10 +2110,10 @@
         -: 2108:   png_debug(1, "in png_do_write_interlace");
         -: 2109:
         -: 2110:   /* We don't have to do anything on the last pass (6) */
-      291: 2111:   if (pass < 6)
+      912: 2111:   if (pass < 6)
         -: 2112:   {
         -: 2113:      /* Each pixel depth is handled separately */
-      291: 2114:      switch (row_info->pixel_depth)
+      912: 2114:      switch (row_info->pixel_depth)
         -: 2115:      {
         -: 2116:         case 1:
         -: 2117:         {
@@ -2231,42 +2231,42 @@
         -: 2229:            png_bytep sp;
         -: 2230:            png_bytep dp;
         -: 2231:            png_uint_32 i;
-      291: 2232:            png_uint_32 row_width = row_info->width;
+      912: 2232:            png_uint_32 row_width = row_info->width;
         -: 2233:            png_size_t pixel_bytes;
         -: 2234:
         -: 2235:            /* Start at the beginning */
-      291: 2236:            dp = row;
+      912: 2236:            dp = row;
         -: 2237:
         -: 2238:            /* Find out how many bytes each pixel takes up */
-      291: 2239:            pixel_bytes = (row_info->pixel_depth >> 3);
+      912: 2239:            pixel_bytes = (row_info->pixel_depth >> 3);
         -: 2240:
         -: 2241:            /* Loop through the row, only looking at the pixels that matter */
-    10137: 2242:            for (i = png_pass_start[pass]; i < row_width;
-     9555: 2243:               i += png_pass_inc[pass])
+    47829: 2242:            for (i = png_pass_start[pass]; i < row_width;
+    46005: 2243:               i += png_pass_inc[pass])
         -: 2244:            {
         -: 2245:               /* Find out where the original pixel is */
-     9555: 2246:               sp = row + (png_size_t)i * pixel_bytes;
+    46005: 2246:               sp = row + (png_size_t)i * pixel_bytes;
         -: 2247:
         -: 2248:               /* Move the pixel */
-     9555: 2249:               if (dp != sp)
-     9450: 2250:                  memcpy(dp, sp, pixel_bytes);
+    46005: 2249:               if (dp != sp)
+    45675: 2250:                  memcpy(dp, sp, pixel_bytes);
         -: 2251:
         -: 2252:               /* Next pixel */
-     9555: 2253:               dp += pixel_bytes;
+    46005: 2253:               dp += pixel_bytes;
         -: 2254:            }
-      291: 2255:            break;
+      912: 2255:            break;
         -: 2256:         }
         -: 2257:      }
         -: 2258:      /* Set new row width */
-      873: 2259:      row_info->width = (row_info->width +
-      582: 2260:          png_pass_inc[pass] - 1 -
-      582: 2261:          png_pass_start[pass]) /
-      291: 2262:          png_pass_inc[pass];
+     2736: 2259:      row_info->width = (row_info->width +
+     1824: 2260:          png_pass_inc[pass] - 1 -
+     1824: 2261:          png_pass_start[pass]) /
+      912: 2262:          png_pass_inc[pass];
         -: 2263:
-      291: 2264:      row_info->rowbytes = PNG_ROWBYTES(row_info->pixel_depth,
+      912: 2264:      row_info->rowbytes = PNG_ROWBYTES(row_info->pixel_depth,
         -: 2265:          row_info->width);
         -: 2266:   }
-      291: 2267:}
+      912: 2267:}
         -: 2268:#endif
         -: 2269:
         -: 2270:
@@ -2552,25 +2552,25 @@
         -: 2550:#endif /* WRITE_FILTER */
         -: 2551:
         -: 2552:void /* PRIVATE */
-      393: 2553:png_write_find_filter(png_structrp png_ptr, png_row_infop row_info)
+     1239: 2553:png_write_find_filter(png_structrp png_ptr, png_row_infop row_info)
         -: 2554:{
         -: 2555:#ifndef PNG_WRITE_FILTER_SUPPORTED
         -: 2556:   png_write_filtered_row(png_ptr, png_ptr->row_buf, row_info->rowbytes+1);
         -: 2557:#else
-      393: 2558:   unsigned int filter_to_do = png_ptr->do_filter;
+     1239: 2558:   unsigned int filter_to_do = png_ptr->do_filter;
         -: 2559:   png_bytep row_buf;
         -: 2560:   png_bytep best_row;
         -: 2561:   png_uint_32 bpp;
         -: 2562:   png_size_t mins;
-      393: 2563:   png_size_t row_bytes = row_info->rowbytes;
+     1239: 2563:   png_size_t row_bytes = row_info->rowbytes;
         -: 2564:
         -: 2565:   png_debug(1, "in png_write_find_filter");
         -: 2566:
         -: 2567:   /* Find out how many bytes offset each pixel is */
-      393: 2568:   bpp = (row_info->pixel_depth + 7) >> 3;
+     1239: 2568:   bpp = (row_info->pixel_depth + 7) >> 3;
         -: 2569:
-      393: 2570:   row_buf = png_ptr->row_buf;
-      393: 2571:   mins = PNG_SIZE_MAX - 256/* so we can detect potential overflow of the
+     1239: 2570:   row_buf = png_ptr->row_buf;
+     1239: 2571:   mins = PNG_SIZE_MAX - 256/* so we can detect potential overflow of the
         -: 2572:                               running sum */;
         -: 2573:
         -: 2574:   /* The prediction method we use is to find which method provides the
@@ -2601,16 +2601,16 @@
         -: 2599:   /* We don't need to test the 'no filter' case if this is the only filter
         -: 2600:    * that has been chosen, as it doesn't actually do anything to the data.
         -: 2601:    */
-      393: 2602:   best_row = png_ptr->row_buf;
+     1239: 2602:   best_row = png_ptr->row_buf;
         -: 2603:
-      393: 2604:   if (PNG_SIZE_MAX/128 <= row_bytes)
+     1239: 2604:   if (PNG_SIZE_MAX/128 <= row_bytes)
         -: 2605:   {
         -: 2606:      /* Overflow can occur in the calculation, just select the lowest set
         -: 2607:       * filter.
         -: 2608:       */
     #####: 2609:      filter_to_do &= 0U-filter_to_do;
         -: 2610:   }
-      393: 2611:   else if ((filter_to_do & PNG_FILTER_NONE) != 0 &&
+     1239: 2611:   else if ((filter_to_do & PNG_FILTER_NONE) != 0 &&
         -: 2612:         filter_to_do != PNG_FILTER_NONE)
         -: 2613:   {
         -: 2614:      /* Overflow not possible and multiple filters in the list, including the
@@ -2637,14 +2637,14 @@
         -: 2635:   }
         -: 2636:
         -: 2637:   /* Sub filter */
-      393: 2638:   if (filter_to_do == PNG_FILTER_SUB)
+     1239: 2638:   if (filter_to_do == PNG_FILTER_SUB)
         -: 2639:   /* It's the only filter so no testing is needed */
         -: 2640:   {
     #####: 2641:      png_setup_sub_row_only(png_ptr, bpp, row_bytes);
     #####: 2642:      best_row = png_ptr->try_row;
         -: 2643:   }
         -: 2644:
-      393: 2645:   else if ((filter_to_do & PNG_FILTER_SUB) != 0)
+     1239: 2645:   else if ((filter_to_do & PNG_FILTER_SUB) != 0)
         -: 2646:   {
         -: 2647:      png_size_t sum;
       393: 2648:      png_size_t lmins = mins;
@@ -2664,13 +2664,13 @@
         -: 2662:   }
         -: 2663:
         -: 2664:   /* Up filter */
-      393: 2665:   if (filter_to_do == PNG_FILTER_UP)
+     1239: 2665:   if (filter_to_do == PNG_FILTER_UP)
         -: 2666:   {
     #####: 2667:      png_setup_up_row_only(png_ptr, row_bytes);
     #####: 2668:      best_row = png_ptr->try_row;
         -: 2669:   }
         -: 2670:
-      393: 2671:   else if ((filter_to_do & PNG_FILTER_UP) != 0)
+     1239: 2671:   else if ((filter_to_do & PNG_FILTER_UP) != 0)
         -: 2672:   {
         -: 2673:      png_size_t sum;
       393: 2674:      png_size_t lmins = mins;
@@ -2690,13 +2690,13 @@
         -: 2688:   }
         -: 2689:
         -: 2690:   /* Avg filter */
-      393: 2691:   if (filter_to_do == PNG_FILTER_AVG)
+     1239: 2691:   if (filter_to_do == PNG_FILTER_AVG)
         -: 2692:   {
     #####: 2693:      png_setup_avg_row_only(png_ptr, bpp, row_bytes);
     #####: 2694:      best_row = png_ptr->try_row;
         -: 2695:   }
         -: 2696:
-      393: 2697:   else if ((filter_to_do & PNG_FILTER_AVG) != 0)
+     1239: 2697:   else if ((filter_to_do & PNG_FILTER_AVG) != 0)
         -: 2698:   {
         -: 2699:      png_size_t sum;
       393: 2700:      png_size_t lmins = mins;
@@ -2716,13 +2716,13 @@
         -: 2714:   }
         -: 2715:
         -: 2716:   /* Paeth filter */
-      393: 2717:   if (filter_to_do == PNG_FILTER_PAETH)
+     1239: 2717:   if (filter_to_do == PNG_FILTER_PAETH)
         -: 2718:   {
     #####: 2719:      png_setup_paeth_row_only(png_ptr, bpp, row_bytes);
     #####: 2720:      best_row = png_ptr->try_row;
         -: 2721:   }
         -: 2722:
-      393: 2723:   else if ((filter_to_do & PNG_FILTER_PAETH) != 0)
+     1239: 2723:   else if ((filter_to_do & PNG_FILTER_PAETH) != 0)
         -: 2724:   {
         -: 2725:      png_size_t sum;
       393: 2726:      png_size_t lmins = mins;
@@ -2741,26 +2741,26 @@
         -: 2739:   }
         -: 2740:
         -: 2741:   /* Do the actual writing of the filtered row data from the chosen filter. */
-      393: 2742:   png_write_filtered_row(png_ptr, best_row, row_info->rowbytes+1);
+     1239: 2742:   png_write_filtered_row(png_ptr, best_row, row_info->rowbytes+1);
         -: 2743:
         -: 2744:#endif /* WRITE_FILTER */
-      393: 2745:}
+     1239: 2745:}
         -: 2746:
         -: 2747:
         -: 2748:/* Do the actual writing of a previously filtered row. */
         -: 2749:static void
-      393: 2750:png_write_filtered_row(png_structrp png_ptr, png_bytep filtered_row,
+     1239: 2750:png_write_filtered_row(png_structrp png_ptr, png_bytep filtered_row,
         -: 2751:    png_size_t full_row_length/*includes filter byte*/)
         -: 2752:{
         -: 2753:   png_debug(1, "in png_write_filtered_row");
         -: 2754:
         -: 2755:   png_debug1(2, "filter = %d", filtered_row[0]);
         -: 2756:
-      393: 2757:   png_compress_IDAT(png_ptr, filtered_row, full_row_length, Z_NO_FLUSH);
+     1239: 2757:   png_compress_IDAT(png_ptr, filtered_row, full_row_length, Z_NO_FLUSH);
         -: 2758:
         -: 2759:#ifdef PNG_WRITE_FILTER_SUPPORTED
         -: 2760:   /* Swap the current and previous rows */
-      393: 2761:   if (png_ptr->prev_row != NULL)
+     1239: 2761:   if (png_ptr->prev_row != NULL)
         -: 2762:   {
         -: 2763:      png_bytep tptr;
         -: 2764:
@@ -2771,16 +2771,16 @@
         -: 2769:#endif /* WRITE_FILTER */
         -: 2770:
         -: 2771:   /* Finish row - updates counters and flushes zlib if last row */
-      393: 2772:   png_write_finish_row(png_ptr);
+     1239: 2772:   png_write_finish_row(png_ptr);
         -: 2773:
         -: 2774:#ifdef PNG_WRITE_FLUSH_SUPPORTED
-      393: 2775:   png_ptr->flush_rows++;
+     1239: 2775:   png_ptr->flush_rows++;
         -: 2776:
-      393: 2777:   if (png_ptr->flush_dist > 0 &&
+     1239: 2777:   if (png_ptr->flush_dist > 0 &&
     #####: 2778:       png_ptr->flush_rows >= png_ptr->flush_dist)
         -: 2779:   {
     #####: 2780:      png_write_flush(png_ptr);
         -: 2781:   }
         -: 2782:#endif /* WRITE_FLUSH */
-      393: 2783:}
+     1239: 2783:}
         -: 2784:#endif /* WRITE */

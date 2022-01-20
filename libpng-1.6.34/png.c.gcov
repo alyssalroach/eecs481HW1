@@ -73,64 +73,64 @@
         -:   71: * PNG signature (this is the same behavior as strcmp, memcmp, etc).
         -:   72: */
         -:   73:int PNGAPI
-        3:   74:png_sig_cmp(png_const_bytep sig, png_size_t start, png_size_t num_to_check)
+        6:   74:png_sig_cmp(png_const_bytep sig, png_size_t start, png_size_t num_to_check)
         -:   75:{
-        3:   76:   png_byte png_signature[8] = {137, 80, 78, 71, 13, 10, 26, 10};
+        6:   76:   png_byte png_signature[8] = {137, 80, 78, 71, 13, 10, 26, 10};
         -:   77:
-        3:   78:   if (num_to_check > 8)
+        6:   78:   if (num_to_check > 8)
     #####:   79:      num_to_check = 8;
         -:   80:
-        3:   81:   else if (num_to_check < 1)
+        6:   81:   else if (num_to_check < 1)
     #####:   82:      return (-1);
         -:   83:
-        3:   84:   if (start > 7)
+        6:   84:   if (start > 7)
     #####:   85:      return (-1);
         -:   86:
-        3:   87:   if (start + num_to_check > 8)
+        6:   87:   if (start + num_to_check > 8)
     #####:   88:      num_to_check = 8 - start;
         -:   89:
-        3:   90:   return ((int)(memcmp(&sig[start], &png_signature[start], num_to_check)));
+        6:   90:   return ((int)(memcmp(&sig[start], &png_signature[start], num_to_check)));
         -:   91:}
         -:   92:
         -:   93:#endif /* READ */
         -:   94:
         -:   95:#if defined(PNG_READ_SUPPORTED) || defined(PNG_WRITE_SUPPORTED)
         -:   96:/* Function to allocate memory for zlib */
-       36:   97:PNG_FUNCTION(voidpf /* PRIVATE */,
+       57:   97:PNG_FUNCTION(voidpf /* PRIVATE */,
         -:   98:png_zalloc,(voidpf png_ptr, uInt items, uInt size),PNG_ALLOCATED)
         -:   99:{
-       36:  100:   png_alloc_size_t num_bytes = size;
+       57:  100:   png_alloc_size_t num_bytes = size;
         -:  101:
-       36:  102:   if (png_ptr == NULL)
+       57:  102:   if (png_ptr == NULL)
     #####:  103:      return NULL;
         -:  104:
-       36:  105:   if (items >= (~(png_alloc_size_t)0)/size)
+       57:  105:   if (items >= (~(png_alloc_size_t)0)/size)
         -:  106:   {
     #####:  107:      png_warning (png_voidcast(png_structrp, png_ptr),
         -:  108:          "Potential overflow in png_zalloc()");
     #####:  109:      return NULL;
         -:  110:   }
         -:  111:
-       36:  112:   num_bytes *= items;
-       36:  113:   return png_malloc_warn(png_voidcast(png_structrp, png_ptr), num_bytes);
+       57:  112:   num_bytes *= items;
+       57:  113:   return png_malloc_warn(png_voidcast(png_structrp, png_ptr), num_bytes);
         -:  114:}
         -:  115:
         -:  116:/* Function to free memory for zlib */
         -:  117:void /* PRIVATE */
-       36:  118:png_zfree(voidpf png_ptr, voidpf ptr)
+       57:  118:png_zfree(voidpf png_ptr, voidpf ptr)
         -:  119:{
-       36:  120:   png_free(png_voidcast(png_const_structrp,png_ptr), ptr);
-       36:  121:}
+       57:  120:   png_free(png_voidcast(png_const_structrp,png_ptr), ptr);
+       57:  121:}
         -:  122:
         -:  123:/* Reset the CRC variable to 32 bits of 1's.  Care must be taken
         -:  124: * in case CRC is > 32 bits to leave the top bits 0.
         -:  125: */
         -:  126:void /* PRIVATE */
-      108:  127:png_reset_crc(png_structrp png_ptr)
+      150:  127:png_reset_crc(png_structrp png_ptr)
         -:  128:{
         -:  129:   /* The cast is safe because the crc is a 32-bit value. */
-      108:  130:   png_ptr->crc = (png_uint_32)crc32(0, Z_NULL, 0);
-      108:  131:}
+      150:  130:   png_ptr->crc = (png_uint_32)crc32(0, Z_NULL, 0);
+      150:  131:}
         -:  132:
         -:  133:/* Calculate the CRC over a section of data.  We can only pass as
         -:  134: * much data to this routine as the largest single buffer size.  We
@@ -138,20 +138,20 @@
         -:  136: * trouble of calculating it.
         -:  137: */
         -:  138:void /* PRIVATE */
-      534:  139:png_calculate_crc(png_structrp png_ptr, png_const_bytep ptr, png_size_t length)
+     2142:  139:png_calculate_crc(png_structrp png_ptr, png_const_bytep ptr, png_size_t length)
         -:  140:{
-      534:  141:   int need_crc = 1;
+     2142:  141:   int need_crc = 1;
         -:  142:
-      534:  143:   if (PNG_CHUNK_ANCILLARY(png_ptr->chunk_name) != 0)
+     2142:  143:   if (PNG_CHUNK_ANCILLARY(png_ptr->chunk_name) != 0)
         -:  144:   {
-      504:  145:      if ((png_ptr->flags & PNG_FLAG_CRC_ANCILLARY_MASK) ==
+      528:  145:      if ((png_ptr->flags & PNG_FLAG_CRC_ANCILLARY_MASK) ==
         -:  146:          (PNG_FLAG_CRC_ANCILLARY_USE | PNG_FLAG_CRC_ANCILLARY_NOWARN))
     #####:  147:         need_crc = 0;
         -:  148:   }
         -:  149:
         -:  150:   else /* critical */
         -:  151:   {
-       30:  152:      if ((png_ptr->flags & PNG_FLAG_CRC_CRITICAL_IGNORE) != 0)
+     1614:  152:      if ((png_ptr->flags & PNG_FLAG_CRC_CRITICAL_IGNORE) != 0)
     #####:  153:         need_crc = 0;
         -:  154:   }
         -:  155:
@@ -160,65 +160,65 @@
         -:  158:    * following cast is safe.  'uInt' may be no more than 16 bits, so it is
         -:  159:    * necessary to perform a loop here.
         -:  160:    */
-      534:  161:   if (need_crc != 0 && length > 0)
+     2142:  161:   if (need_crc != 0 && length > 0)
         -:  162:   {
-      534:  163:      uLong crc = png_ptr->crc; /* Should never issue a warning */
+     2142:  163:      uLong crc = png_ptr->crc; /* Should never issue a warning */
         -:  164:
         -:  165:      do
         -:  166:      {
-      534:  167:         uInt safe_length = (uInt)length;
+     2142:  167:         uInt safe_length = (uInt)length;
         -:  168:#ifndef __COVERITY__
-      534:  169:         if (safe_length == 0)
+     2142:  169:         if (safe_length == 0)
     #####:  170:            safe_length = (uInt)-1; /* evil, but safe */
         -:  171:#endif
         -:  172:
-      534:  173:         crc = crc32(crc, ptr, safe_length);
+     2142:  173:         crc = crc32(crc, ptr, safe_length);
         -:  174:
         -:  175:         /* The following should never issue compiler warnings; if they do the
         -:  176:          * target system has characteristics that will probably violate other
         -:  177:          * assumptions within the libpng code.
         -:  178:          */
-      534:  179:         ptr += safe_length;
-      534:  180:         length -= safe_length;
+     2142:  179:         ptr += safe_length;
+     2142:  180:         length -= safe_length;
         -:  181:      }
-      534:  182:      while (length > 0);
+     2142:  182:      while (length > 0);
         -:  183:
         -:  184:      /* And the following is always safe because the crc is only 32 bits. */
-      534:  185:      png_ptr->crc = (png_uint_32)crc;
+     2142:  185:      png_ptr->crc = (png_uint_32)crc;
         -:  186:   }
-      534:  187:}
+     2142:  187:}
         -:  188:
         -:  189:/* Check a user supplied version number, called from both read and write
         -:  190: * functions that create a png_struct.
         -:  191: */
         -:  192:int
-        7:  193:png_user_version_check(png_structrp png_ptr, png_const_charp user_png_ver)
+       14:  193:png_user_version_check(png_structrp png_ptr, png_const_charp user_png_ver)
         -:  194:{
         -:  195:   /* Libpng versions 1.0.0 and later are binary compatible if the version
         -:  196:    * string matches through the second '.'; we must recompile any
         -:  197:    * applications that use any older library version.
         -:  198:    */
         -:  199:
-        7:  200:   if (user_png_ver != NULL)
+       14:  200:   if (user_png_ver != NULL)
         -:  201:   {
-        7:  202:      int i = -1;
-        7:  203:      int found_dots = 0;
+       14:  202:      int i = -1;
+       14:  203:      int found_dots = 0;
         -:  204:
         -:  205:      do
         -:  206:      {
-       28:  207:         i++;
-       28:  208:         if (user_png_ver[i] != PNG_LIBPNG_VER_STRING[i])
+       56:  207:         i++;
+       56:  208:         if (user_png_ver[i] != PNG_LIBPNG_VER_STRING[i])
     #####:  209:            png_ptr->flags |= PNG_FLAG_LIBRARY_MISMATCH;
-       28:  210:         if (user_png_ver[i] == '.')
-       14:  211:            found_dots++;
-       42:  212:      } while (found_dots < 2 && user_png_ver[i] != 0 &&
-       49:  213:            PNG_LIBPNG_VER_STRING[i] != 0);
+       56:  210:         if (user_png_ver[i] == '.')
+       28:  211:            found_dots++;
+       84:  212:      } while (found_dots < 2 && user_png_ver[i] != 0 &&
+       98:  213:            PNG_LIBPNG_VER_STRING[i] != 0);
         -:  214:   }
         -:  215:
         -:  216:   else
     #####:  217:      png_ptr->flags |= PNG_FLAG_LIBRARY_MISMATCH;
         -:  218:
-        7:  219:   if ((png_ptr->flags & PNG_FLAG_LIBRARY_MISMATCH) != 0)
+       14:  219:   if ((png_ptr->flags & PNG_FLAG_LIBRARY_MISMATCH) != 0)
         -:  220:   {
         -:  221:#ifdef PNG_WARNINGS_SUPPORTED
     #####:  222:      size_t pos = 0;
@@ -242,13 +242,13 @@
         -:  240:   }
         -:  241:
         -:  242:   /* Success return. */
-        7:  243:   return 1;
+       14:  243:   return 1;
         -:  244:}
         -:  245:
         -:  246:/* Generic function to create a png_struct for either read or write - this
         -:  247: * contains the common initialization.
         -:  248: */
-        7:  249:PNG_FUNCTION(png_structp /* PRIVATE */,
+       14:  249:PNG_FUNCTION(png_structp /* PRIVATE */,
         -:  250:png_create_png_struct,(png_const_charp user_png_ver, png_voidp error_ptr,
         -:  251:    png_error_ptr error_fn, png_error_ptr warn_fn, png_voidp mem_ptr,
         -:  252:    png_malloc_ptr malloc_fn, png_free_ptr free_fn),PNG_ALLOCATED)
@@ -262,23 +262,23 @@
         -:  260:    * build enough context to allow the user provided memory allocator (if any)
         -:  261:    * to be called.
         -:  262:    */
-        7:  263:   memset(&create_struct, 0, (sizeof create_struct));
+       14:  263:   memset(&create_struct, 0, (sizeof create_struct));
         -:  264:
         -:  265:   /* Added at libpng-1.2.6 */
         -:  266:#  ifdef PNG_USER_LIMITS_SUPPORTED
-        7:  267:      create_struct.user_width_max = PNG_USER_WIDTH_MAX;
-        7:  268:      create_struct.user_height_max = PNG_USER_HEIGHT_MAX;
+       14:  267:      create_struct.user_width_max = PNG_USER_WIDTH_MAX;
+       14:  268:      create_struct.user_height_max = PNG_USER_HEIGHT_MAX;
         -:  269:
         -:  270:#     ifdef PNG_USER_CHUNK_CACHE_MAX
         -:  271:      /* Added at libpng-1.2.43 and 1.4.0 */
-        7:  272:      create_struct.user_chunk_cache_max = PNG_USER_CHUNK_CACHE_MAX;
+       14:  272:      create_struct.user_chunk_cache_max = PNG_USER_CHUNK_CACHE_MAX;
         -:  273:#     endif
         -:  274:
         -:  275:#     ifdef PNG_USER_CHUNK_MALLOC_MAX
         -:  276:      /* Added at libpng-1.2.43 and 1.4.1, required only for read but exists
         -:  277:       * in png_struct regardless.
         -:  278:       */
-        7:  279:      create_struct.user_chunk_malloc_max = PNG_USER_CHUNK_MALLOC_MAX;
+       14:  279:      create_struct.user_chunk_malloc_max = PNG_USER_CHUNK_MALLOC_MAX;
         -:  280:#     endif
         -:  281:#  endif
         -:  282:
@@ -286,7 +286,7 @@
         -:  284:    * to do them now even though error handling is not yet set up.
         -:  285:    */
         -:  286:#  ifdef PNG_USER_MEM_SUPPORTED
-        7:  287:      png_set_mem_fn(&create_struct, mem_ptr, malloc_fn, free_fn);
+       14:  287:      png_set_mem_fn(&create_struct, mem_ptr, malloc_fn, free_fn);
         -:  288:#  else
         -:  289:      PNG_UNUSED(mem_ptr)
         -:  290:      PNG_UNUSED(malloc_fn)
@@ -298,10 +298,10 @@
         -:  296:    * extremely sophisticated.  The design lacks merit but is implicit in the
         -:  297:    * API.
         -:  298:    */
-        7:  299:   png_set_error_fn(&create_struct, error_ptr, error_fn, warn_fn);
+       14:  299:   png_set_error_fn(&create_struct, error_ptr, error_fn, warn_fn);
         -:  300:
         -:  301:#  ifdef PNG_SETJMP_SUPPORTED
-        7:  302:      if (!setjmp(create_jmp_buf))
+       14:  302:      if (!setjmp(create_jmp_buf))
         -:  303:#  endif
         -:  304:      {
         -:  305:#  ifdef PNG_SETJMP_SUPPORTED
@@ -310,37 +310,37 @@
         -:  308:          * setjmp() support compiled in, but it is safe - this stuff should
         -:  309:          * never happen.
         -:  310:          */
-        7:  311:         create_struct.jmp_buf_ptr = &create_jmp_buf;
-        7:  312:         create_struct.jmp_buf_size = 0; /*stack allocation*/
-        7:  313:         create_struct.longjmp_fn = longjmp;
+       14:  311:         create_struct.jmp_buf_ptr = &create_jmp_buf;
+       14:  312:         create_struct.jmp_buf_size = 0; /*stack allocation*/
+       14:  313:         create_struct.longjmp_fn = longjmp;
         -:  314:#  endif
         -:  315:         /* Call the general version checker (shared with read and write code):
         -:  316:          */
-        7:  317:         if (png_user_version_check(&create_struct, user_png_ver) != 0)
+       14:  317:         if (png_user_version_check(&create_struct, user_png_ver) != 0)
         -:  318:         {
-        7:  319:            png_structrp png_ptr = png_voidcast(png_structrp,
+       14:  319:            png_structrp png_ptr = png_voidcast(png_structrp,
         -:  320:                png_malloc_warn(&create_struct, (sizeof *png_ptr)));
         -:  321:
-        7:  322:            if (png_ptr != NULL)
+       14:  322:            if (png_ptr != NULL)
         -:  323:            {
         -:  324:               /* png_ptr->zstream holds a back-pointer to the png_struct, so
         -:  325:                * this can only be done now:
         -:  326:                */
-        7:  327:               create_struct.zstream.zalloc = png_zalloc;
-        7:  328:               create_struct.zstream.zfree = png_zfree;
-        7:  329:               create_struct.zstream.opaque = png_ptr;
+       14:  327:               create_struct.zstream.zalloc = png_zalloc;
+       14:  328:               create_struct.zstream.zfree = png_zfree;
+       14:  329:               create_struct.zstream.opaque = png_ptr;
         -:  330:
         -:  331:#              ifdef PNG_SETJMP_SUPPORTED
         -:  332:               /* Eliminate the local error handling: */
-        7:  333:               create_struct.jmp_buf_ptr = NULL;
-        7:  334:               create_struct.jmp_buf_size = 0;
-        7:  335:               create_struct.longjmp_fn = 0;
+       14:  333:               create_struct.jmp_buf_ptr = NULL;
+       14:  334:               create_struct.jmp_buf_size = 0;
+       14:  335:               create_struct.longjmp_fn = 0;
         -:  336:#              endif
         -:  337:
-        7:  338:               *png_ptr = create_struct;
+       14:  338:               *png_ptr = create_struct;
         -:  339:
         -:  340:               /* This is the successful return point */
-        7:  341:               return png_ptr;
+       14:  341:               return png_ptr;
         -:  342:            }
         -:  343:         }
         -:  344:      }
@@ -352,14 +352,14 @@
         -:  350:}
         -:  351:
         -:  352:/* Allocate the memory for an info_struct for the application. */
-       12:  353:PNG_FUNCTION(png_infop,PNGAPI
+       24:  353:PNG_FUNCTION(png_infop,PNGAPI
         -:  354:png_create_info_struct,(png_const_structrp png_ptr),PNG_ALLOCATED)
         -:  355:{
         -:  356:   png_inforp info_ptr;
         -:  357:
         -:  358:   png_debug(1, "in png_create_info_struct");
         -:  359:
-       12:  360:   if (png_ptr == NULL)
+       24:  360:   if (png_ptr == NULL)
     #####:  361:      return NULL;
         -:  362:
         -:  363:   /* Use the internal API that does not (or at least should not) error out, so
@@ -367,13 +367,13 @@
         -:  365:    * error handling *after* creating the info_struct because this is the way it
         -:  366:    * has always been done in 'example.c'.
         -:  367:    */
-       12:  368:   info_ptr = png_voidcast(png_inforp, png_malloc_base(png_ptr,
+       24:  368:   info_ptr = png_voidcast(png_inforp, png_malloc_base(png_ptr,
         -:  369:       (sizeof *info_ptr)));
         -:  370:
-       12:  371:   if (info_ptr != NULL)
-       12:  372:      memset(info_ptr, 0, (sizeof *info_ptr));
+       24:  371:   if (info_ptr != NULL)
+       24:  372:      memset(info_ptr, 0, (sizeof *info_ptr));
         -:  373:
-       12:  374:   return info_ptr;
+       24:  374:   return info_ptr;
         -:  375:}
         -:  376:
         -:  377:/* This function frees the memory associated with a single info struct.
@@ -385,19 +385,19 @@
         -:  383: * it).
         -:  384: */
         -:  385:void PNGAPI
-       14:  386:png_destroy_info_struct(png_const_structrp png_ptr, png_infopp info_ptr_ptr)
+       28:  386:png_destroy_info_struct(png_const_structrp png_ptr, png_infopp info_ptr_ptr)
         -:  387:{
-       14:  388:   png_inforp info_ptr = NULL;
+       28:  388:   png_inforp info_ptr = NULL;
         -:  389:
         -:  390:   png_debug(1, "in png_destroy_info_struct");
         -:  391:
-       14:  392:   if (png_ptr == NULL)
+       28:  392:   if (png_ptr == NULL)
     #####:  393:      return;
         -:  394:
-       14:  395:   if (info_ptr_ptr != NULL)
-       12:  396:      info_ptr = *info_ptr_ptr;
+       28:  395:   if (info_ptr_ptr != NULL)
+       24:  396:      info_ptr = *info_ptr_ptr;
         -:  397:
-       14:  398:   if (info_ptr != NULL)
+       28:  398:   if (info_ptr != NULL)
         -:  399:   {
         -:  400:      /* Do this first in case of an error below; if the app implements its own
         -:  401:       * memory management this can lead to png_free calling png_error, which
@@ -405,11 +405,11 @@
         -:  403:       * An infinite loop may result if it then tries to free the same info
         -:  404:       * ptr.
         -:  405:       */
-       12:  406:      *info_ptr_ptr = NULL;
+       24:  406:      *info_ptr_ptr = NULL;
         -:  407:
-       12:  408:      png_free_data(png_ptr, info_ptr, PNG_FREE_ALL, -1);
-       12:  409:      memset(info_ptr, 0, (sizeof *info_ptr));
-       12:  410:      png_free(png_ptr, info_ptr);
+       24:  408:      png_free_data(png_ptr, info_ptr, PNG_FREE_ALL, -1);
+       24:  409:      memset(info_ptr, 0, (sizeof *info_ptr));
+       24:  410:      png_free(png_ptr, info_ptr);
         -:  411:   }
         -:  412:}
         -:  413:
@@ -470,17 +470,17 @@
         -:  468:}
         -:  469:
         -:  470:void PNGAPI
-       18:  471:png_free_data(png_const_structrp png_ptr, png_inforp info_ptr, png_uint_32 mask,
+       48:  471:png_free_data(png_const_structrp png_ptr, png_inforp info_ptr, png_uint_32 mask,
         -:  472:    int num)
         -:  473:{
         -:  474:   png_debug(1, "in png_free_data");
         -:  475:
-       18:  476:   if (png_ptr == NULL || info_ptr == NULL)
+       48:  476:   if (png_ptr == NULL || info_ptr == NULL)
     #####:  477:      return;
         -:  478:
         -:  479:#ifdef PNG_TEXT_SUPPORTED
         -:  480:   /* Free text item num or (if num == -1) all text items */
-       36:  481:   if (info_ptr->text != NULL &&
+       66:  481:   if (info_ptr->text != NULL &&
        18:  482:       ((mask & PNG_FREE_TEXT) & info_ptr->free_me) != 0)
         -:  483:   {
        12:  484:      if (num != -1)
@@ -506,18 +506,18 @@
         -:  504:
         -:  505:#ifdef PNG_tRNS_SUPPORTED
         -:  506:   /* Free any tRNS entry */
-       18:  507:   if (((mask & PNG_FREE_TRNS) & info_ptr->free_me) != 0)
+       48:  507:   if (((mask & PNG_FREE_TRNS) & info_ptr->free_me) != 0)
         -:  508:   {
-    #####:  509:      info_ptr->valid &= ~PNG_INFO_tRNS;
-    #####:  510:      png_free(png_ptr, info_ptr->trans_alpha);
-    #####:  511:      info_ptr->trans_alpha = NULL;
-    #####:  512:      info_ptr->num_trans = 0;
+        6:  509:      info_ptr->valid &= ~PNG_INFO_tRNS;
+        6:  510:      png_free(png_ptr, info_ptr->trans_alpha);
+        6:  511:      info_ptr->trans_alpha = NULL;
+        6:  512:      info_ptr->num_trans = 0;
         -:  513:   }
         -:  514:#endif
         -:  515:
         -:  516:#ifdef PNG_sCAL_SUPPORTED
         -:  517:   /* Free any sCAL entry */
-       18:  518:   if (((mask & PNG_FREE_SCAL) & info_ptr->free_me) != 0)
+       48:  518:   if (((mask & PNG_FREE_SCAL) & info_ptr->free_me) != 0)
         -:  519:   {
         6:  520:      png_free(png_ptr, info_ptr->scal_s_width);
         6:  521:      png_free(png_ptr, info_ptr->scal_s_height);
@@ -529,7 +529,7 @@
         -:  527:
         -:  528:#ifdef PNG_pCAL_SUPPORTED
         -:  529:   /* Free any pCAL entry */
-       18:  530:   if (((mask & PNG_FREE_PCAL) & info_ptr->free_me) != 0)
+       48:  530:   if (((mask & PNG_FREE_PCAL) & info_ptr->free_me) != 0)
         -:  531:   {
         6:  532:      png_free(png_ptr, info_ptr->pcal_purpose);
         6:  533:      png_free(png_ptr, info_ptr->pcal_units);
@@ -552,7 +552,7 @@
         -:  550:
         -:  551:#ifdef PNG_iCCP_SUPPORTED
         -:  552:   /* Free any profile entry */
-       18:  553:   if (((mask & PNG_FREE_ICCP) & info_ptr->free_me) != 0)
+       48:  553:   if (((mask & PNG_FREE_ICCP) & info_ptr->free_me) != 0)
         -:  554:   {
     #####:  555:      png_free(png_ptr, info_ptr->iccp_name);
     #####:  556:      png_free(png_ptr, info_ptr->iccp_profile);
@@ -564,7 +564,7 @@
         -:  562:
         -:  563:#ifdef PNG_sPLT_SUPPORTED
         -:  564:   /* Free a given sPLT entry, or (if num == -1) all sPLT entries */
-       18:  565:   if (info_ptr->splt_palettes != NULL &&
+       48:  565:   if (info_ptr->splt_palettes != NULL &&
     #####:  566:       ((mask & PNG_FREE_SPLT) & info_ptr->free_me) != 0)
         -:  567:   {
     #####:  568:      if (num != -1)
@@ -594,7 +594,7 @@
         -:  592:#endif
         -:  593:
         -:  594:#ifdef PNG_STORE_UNKNOWN_CHUNKS_SUPPORTED
-       18:  595:   if (info_ptr->unknown_chunks != NULL &&
+       48:  595:   if (info_ptr->unknown_chunks != NULL &&
     #####:  596:       ((mask & PNG_FREE_UNKN) & info_ptr->free_me) != 0)
         -:  597:   {
     #####:  598:      if (num != -1)
@@ -619,7 +619,7 @@
         -:  617:
         -:  618:#ifdef PNG_eXIf_SUPPORTED
         -:  619:   /* Free any eXIf entry */
-       18:  620:   if (((mask & PNG_FREE_EXIF) & info_ptr->free_me) != 0)
+       48:  620:   if (((mask & PNG_FREE_EXIF) & info_ptr->free_me) != 0)
         -:  621:   {
         -:  622:# ifdef PNG_READ_eXIf_SUPPORTED
         6:  623:      if (info_ptr->eXIf_buf)
@@ -639,7 +639,7 @@
         -:  637:
         -:  638:#ifdef PNG_hIST_SUPPORTED
         -:  639:   /* Free any hIST entry */
-       18:  640:   if (((mask & PNG_FREE_HIST) & info_ptr->free_me) != 0)
+       48:  640:   if (((mask & PNG_FREE_HIST) & info_ptr->free_me) != 0)
         -:  641:   {
     #####:  642:      png_free(png_ptr, info_ptr->hist);
     #####:  643:      info_ptr->hist = NULL;
@@ -648,17 +648,17 @@
         -:  646:#endif
         -:  647:
         -:  648:   /* Free any PLTE entry that was internally allocated */
-       18:  649:   if (((mask & PNG_FREE_PLTE) & info_ptr->free_me) != 0)
+       48:  649:   if (((mask & PNG_FREE_PLTE) & info_ptr->free_me) != 0)
         -:  650:   {
-    #####:  651:      png_free(png_ptr, info_ptr->palette);
-    #####:  652:      info_ptr->palette = NULL;
-    #####:  653:      info_ptr->valid &= ~PNG_INFO_PLTE;
-    #####:  654:      info_ptr->num_palette = 0;
+        6:  651:      png_free(png_ptr, info_ptr->palette);
+        6:  652:      info_ptr->palette = NULL;
+        6:  653:      info_ptr->valid &= ~PNG_INFO_PLTE;
+        6:  654:      info_ptr->num_palette = 0;
         -:  655:   }
         -:  656:
         -:  657:#ifdef PNG_INFO_IMAGE_SUPPORTED
         -:  658:   /* Free any image bits attached to the info structure */
-       18:  659:   if (((mask & PNG_FREE_ROWS) & info_ptr->free_me) != 0)
+       48:  659:   if (((mask & PNG_FREE_ROWS) & info_ptr->free_me) != 0)
         -:  660:   {
     #####:  661:      if (info_ptr->row_pointers != NULL)
         -:  662:      {
@@ -673,10 +673,10 @@
         -:  671:   }
         -:  672:#endif
         -:  673:
-       18:  674:   if (num != -1)
-    #####:  675:      mask &= ~PNG_FREE_MUL;
+       48:  674:   if (num != -1)
+       12:  675:      mask &= ~PNG_FREE_MUL;
         -:  676:
-       18:  677:   info_ptr->free_me &= ~mask;
+       48:  677:   info_ptr->free_me &= ~mask;
         -:  678:}
         -:  679:#endif /* READ || WRITE */
         -:  680:
@@ -702,14 +702,14 @@
         -:  700: * function of your own because "FILE *" isn't necessarily available.
         -:  701: */
         -:  702:void PNGAPI
-        6:  703:png_init_io(png_structrp png_ptr, png_FILE_p fp)
+       12:  703:png_init_io(png_structrp png_ptr, png_FILE_p fp)
         -:  704:{
         -:  705:   png_debug(1, "in png_init_io");
         -:  706:
-        6:  707:   if (png_ptr == NULL)
+       12:  707:   if (png_ptr == NULL)
     #####:  708:      return;
         -:  709:
-        6:  710:   png_ptr->io_ptr = (png_voidp)fp;
+       12:  710:   png_ptr->io_ptr = (png_voidp)fp;
         -:  711:}
         -:  712:#  endif
         -:  713:
@@ -810,14 +810,14 @@
         -:  808:#endif /* READ || WRITE */
         -:  809:
         -:  810:png_const_charp PNGAPI
-        1:  811:png_get_copyright(png_const_structrp png_ptr)
+        2:  811:png_get_copyright(png_const_structrp png_ptr)
         -:  812:{
         -:  813:   PNG_UNUSED(png_ptr)  /* Silence compiler warning about unused png_ptr */
         -:  814:#ifdef PNG_STRING_COPYRIGHT
         -:  815:   return PNG_STRING_COPYRIGHT
         -:  816:#else
         -:  817:#  ifdef __STDC__
-        1:  818:   return PNG_STRING_NEWLINE \
+        2:  818:   return PNG_STRING_NEWLINE \
         -:  819:      "libpng version 1.6.34 - September 29, 2017" PNG_STRING_NEWLINE \
         -:  820:      "Copyright (c) 1998-2002,2004,2006-2017 Glenn Randers-Pehrson" \
         -:  821:      PNG_STRING_NEWLINE \
@@ -849,20 +849,20 @@
         -:  847:}
         -:  848:
         -:  849:png_const_charp PNGAPI
-        1:  850:png_get_header_ver(png_const_structrp png_ptr)
+        2:  850:png_get_header_ver(png_const_structrp png_ptr)
         -:  851:{
         -:  852:   /* Version of *.h files used when building libpng */
         -:  853:   PNG_UNUSED(png_ptr)  /* Silence compiler warning about unused png_ptr */
-        1:  854:   return PNG_LIBPNG_VER_STRING;
+        2:  854:   return PNG_LIBPNG_VER_STRING;
         -:  855:}
         -:  856:
         -:  857:png_const_charp PNGAPI
-        1:  858:png_get_header_version(png_const_structrp png_ptr)
+        2:  858:png_get_header_version(png_const_structrp png_ptr)
         -:  859:{
         -:  860:   /* Returns longer string containing both version and date */
         -:  861:   PNG_UNUSED(png_ptr)  /* Silence compiler warning about unused png_ptr */
         -:  862:#ifdef __STDC__
-        1:  863:   return PNG_HEADER_VERSION_STRING
+        2:  863:   return PNG_HEADER_VERSION_STRING
         -:  864:#  ifndef PNG_READ_SUPPORTED
         -:  865:      " (NO READ SUPPORT)"
         -:  866:#  endif
@@ -931,13 +931,13 @@
         -:  929:
         -:  930:#ifdef PNG_SET_UNKNOWN_CHUNKS_SUPPORTED
         -:  931:int PNGAPI
-       51:  932:png_handle_as_unknown(png_const_structrp png_ptr, png_const_bytep chunk_name)
+       66:  932:png_handle_as_unknown(png_const_structrp png_ptr, png_const_bytep chunk_name)
         -:  933:{
         -:  934:   /* Check chunk_name and return "keep" value if it's on the list, else 0 */
         -:  935:   png_const_bytep p, p_end;
         -:  936:
-       51:  937:   if (png_ptr == NULL || chunk_name == NULL || png_ptr->num_chunk_list == 0)
-       51:  938:      return PNG_HANDLE_CHUNK_AS_DEFAULT;
+       66:  937:   if (png_ptr == NULL || chunk_name == NULL || png_ptr->num_chunk_list == 0)
+       66:  938:      return PNG_HANDLE_CHUNK_AS_DEFAULT;
         -:  939:
     #####:  940:   p_end = png_ptr->chunk_list;
     #####:  941:   p = p_end + png_ptr->num_chunk_list*5; /* beyond end */
@@ -966,12 +966,12 @@
         -:  964:#if defined(PNG_READ_UNKNOWN_CHUNKS_SUPPORTED) ||\
         -:  965:   defined(PNG_HANDLE_AS_UNKNOWN_SUPPORTED)
         -:  966:int /* PRIVATE */
-       51:  967:png_chunk_unknown_handling(png_const_structrp png_ptr, png_uint_32 chunk_name)
+       66:  967:png_chunk_unknown_handling(png_const_structrp png_ptr, png_uint_32 chunk_name)
         -:  968:{
         -:  969:   png_byte chunk_string[5];
         -:  970:
-       51:  971:   PNG_CSTRING_FROM_CHUNK(chunk_string, chunk_name);
-       51:  972:   return png_handle_as_unknown(png_ptr, chunk_string);
+       66:  971:   PNG_CSTRING_FROM_CHUNK(chunk_string, chunk_name);
+       66:  972:   return png_handle_as_unknown(png_ptr, chunk_string);
         -:  973:}
         -:  974:#endif /* READ_UNKNOWN_CHUNKS || HANDLE_AS_UNKNOWN */
         -:  975:#endif /* SET_UNKNOWN_CHUNKS */
@@ -991,10 +991,10 @@
         -:  989:
         -:  990:/* This function was added to libpng-1.0.7 */
         -:  991:png_uint_32 PNGAPI
-        1:  992:png_access_version_number(void)
+        2:  992:png_access_version_number(void)
         -:  993:{
         -:  994:   /* Version of *.c files used when building libpng */
-        1:  995:   return((png_uint_32)PNG_LIBPNG_VER);
+        2:  995:   return((png_uint_32)PNG_LIBPNG_VER);
         -:  996:}
         -:  997:
         -:  998:#if defined(PNG_READ_SUPPORTED) || defined(PNG_WRITE_SUPPORTED)
@@ -1075,7 +1075,7 @@
         -: 1073:/* Added at libpng version 1.2.34 and 1.4.0 (moved from pngset.c) */
         -: 1074:#ifdef PNG_GAMMA_SUPPORTED /* always set if COLORSPACE */
         -: 1075:static int
-       12: 1076:png_colorspace_check_gamma(png_const_structrp png_ptr,
+       18: 1076:png_colorspace_check_gamma(png_const_structrp png_ptr,
         -: 1077:    png_colorspacerp colorspace, png_fixed_point gAMA, int from)
         -: 1078:   /* This is called to check a new gamma value against an existing one.  The
         -: 1079:    * routine returns false if the new gamma value should not be written.
@@ -1089,7 +1089,7 @@
         -: 1087:{
         -: 1088:   png_fixed_point gtest;
         -: 1089:
-       18: 1090:   if ((colorspace->flags & PNG_COLORSPACE_HAVE_GAMMA) != 0 &&
+       24: 1090:   if ((colorspace->flags & PNG_COLORSPACE_HAVE_GAMMA) != 0 &&
        12: 1091:       (png_muldiv(&gtest, colorspace->gamma, PNG_FP_1, gAMA) == 0  ||
         6: 1092:      png_gamma_significant(gtest) != 0))
         -: 1093:   {
@@ -1115,11 +1115,11 @@
         -: 1113:      }
         -: 1114:   }
         -: 1115:
-       12: 1116:   return 1;
+       18: 1116:   return 1;
         -: 1117:}
         -: 1118:
         -: 1119:void /* PRIVATE */
-        6: 1120:png_colorspace_set_gamma(png_const_structrp png_ptr,
+       12: 1120:png_colorspace_set_gamma(png_const_structrp png_ptr,
         -: 1121:    png_colorspacerp colorspace, png_fixed_point gAMA)
         -: 1122:{
         -: 1123:   /* Changed in libpng-1.5.4 to limit the values to ensure overflow can't
@@ -1135,28 +1135,28 @@
         -: 1133:    */
         -: 1134:   png_const_charp errmsg;
         -: 1135:
-        6: 1136:   if (gAMA < 16 || gAMA > 625000000)
+       12: 1136:   if (gAMA < 16 || gAMA > 625000000)
     #####: 1137:      errmsg = "gamma value out of range";
         -: 1138:
         -: 1139:#  ifdef PNG_READ_gAMA_SUPPORTED
         -: 1140:   /* Allow the application to set the gamma value more than once */
-        9: 1141:   else if ((png_ptr->mode & PNG_IS_READ_STRUCT) != 0 &&
-        3: 1142:      (colorspace->flags & PNG_COLORSPACE_FROM_gAMA) != 0)
+       18: 1141:   else if ((png_ptr->mode & PNG_IS_READ_STRUCT) != 0 &&
+        6: 1142:      (colorspace->flags & PNG_COLORSPACE_FROM_gAMA) != 0)
     #####: 1143:      errmsg = "duplicate";
         -: 1144:#  endif
         -: 1145:
         -: 1146:   /* Do nothing if the colorspace is already invalid */
-        6: 1147:   else if ((colorspace->flags & PNG_COLORSPACE_INVALID) != 0)
+       12: 1147:   else if ((colorspace->flags & PNG_COLORSPACE_INVALID) != 0)
     #####: 1148:      return;
         -: 1149:
         -: 1150:   else
         -: 1151:   {
-        6: 1152:      if (png_colorspace_check_gamma(png_ptr, colorspace, gAMA,
+       12: 1152:      if (png_colorspace_check_gamma(png_ptr, colorspace, gAMA,
         -: 1153:          1/*from gAMA*/) != 0)
         -: 1154:      {
         -: 1155:         /* Store this gamma value. */
-        6: 1156:         colorspace->gamma = gAMA;
-        6: 1157:         colorspace->flags |=
+       12: 1156:         colorspace->gamma = gAMA;
+       12: 1157:         colorspace->flags |=
         -: 1158:            (PNG_COLORSPACE_HAVE_GAMMA | PNG_COLORSPACE_FROM_gAMA);
         -: 1159:      }
         -: 1160:
@@ -1165,7 +1165,7 @@
         -: 1163:       * corresponds to the case where the existing gamma comes from an sRGB
         -: 1164:       * chunk or profile.  An error message has already been output.
         -: 1165:       */
-        6: 1166:      return;
+       12: 1166:      return;
         -: 1167:   }
         -: 1168:
         -: 1169:   /* Error exit - errmsg has been set. */
@@ -1174,9 +1174,9 @@
         -: 1172:}
         -: 1173:
         -: 1174:void /* PRIVATE */
-       18: 1175:png_colorspace_sync_info(png_const_structrp png_ptr, png_inforp info_ptr)
+       24: 1175:png_colorspace_sync_info(png_const_structrp png_ptr, png_inforp info_ptr)
         -: 1176:{
-       18: 1177:   if ((info_ptr->colorspace.flags & PNG_COLORSPACE_INVALID) != 0)
+       24: 1177:   if ((info_ptr->colorspace.flags & PNG_COLORSPACE_INVALID) != 0)
         -: 1178:   {
         -: 1179:      /* Everything is invalid */
     #####: 1180:      info_ptr->valid &= ~(PNG_INFO_gAMA|PNG_INFO_cHRM|PNG_INFO_sRGB|
@@ -1197,36 +1197,36 @@
         -: 1195:       * it; this allows a PNG to contain a profile which matches sRGB and
         -: 1196:       * yet still have that profile retrievable by the application.
         -: 1197:       */
-       18: 1198:      if ((info_ptr->colorspace.flags & PNG_COLORSPACE_MATCHES_sRGB) != 0)
+       24: 1198:      if ((info_ptr->colorspace.flags & PNG_COLORSPACE_MATCHES_sRGB) != 0)
         9: 1199:         info_ptr->valid |= PNG_INFO_sRGB;
         -: 1200:
         -: 1201:      else
-        9: 1202:         info_ptr->valid &= ~PNG_INFO_sRGB;
+       15: 1202:         info_ptr->valid &= ~PNG_INFO_sRGB;
         -: 1203:
-       18: 1204:      if ((info_ptr->colorspace.flags & PNG_COLORSPACE_HAVE_ENDPOINTS) != 0)
+       24: 1204:      if ((info_ptr->colorspace.flags & PNG_COLORSPACE_HAVE_ENDPOINTS) != 0)
        15: 1205:         info_ptr->valid |= PNG_INFO_cHRM;
         -: 1206:
         -: 1207:      else
-        3: 1208:         info_ptr->valid &= ~PNG_INFO_cHRM;
+        9: 1208:         info_ptr->valid &= ~PNG_INFO_cHRM;
         -: 1209:#     endif
         -: 1210:
-       18: 1211:      if ((info_ptr->colorspace.flags & PNG_COLORSPACE_HAVE_GAMMA) != 0)
-       15: 1212:         info_ptr->valid |= PNG_INFO_gAMA;
+       24: 1211:      if ((info_ptr->colorspace.flags & PNG_COLORSPACE_HAVE_GAMMA) != 0)
+       21: 1212:         info_ptr->valid |= PNG_INFO_gAMA;
         -: 1213:
         -: 1214:      else
         3: 1215:         info_ptr->valid &= ~PNG_INFO_gAMA;
         -: 1216:   }
-       18: 1217:}
+       24: 1217:}
         -: 1218:
         -: 1219:#ifdef PNG_READ_SUPPORTED
         -: 1220:void /* PRIVATE */
-        9: 1221:png_colorspace_sync(png_const_structrp png_ptr, png_inforp info_ptr)
+       12: 1221:png_colorspace_sync(png_const_structrp png_ptr, png_inforp info_ptr)
         -: 1222:{
-        9: 1223:   if (info_ptr == NULL) /* reduce code size; check here not in the caller */
+       12: 1223:   if (info_ptr == NULL) /* reduce code size; check here not in the caller */
     #####: 1224:      return;
         -: 1225:
-        9: 1226:   info_ptr->colorspace = png_ptr->colorspace;
-        9: 1227:   png_colorspace_sync_info(png_ptr, info_ptr);
+       12: 1226:   info_ptr->colorspace = png_ptr->colorspace;
+       12: 1227:   png_colorspace_sync_info(png_ptr, info_ptr);
         -: 1228:}
         -: 1229:#endif
         -: 1230:#endif /* GAMMA */
@@ -2543,36 +2543,36 @@
         -: 2541:#ifdef __GNUC__
         -: 2542:/* This exists solely to work round a warning from GNU C. */
         -: 2543:static int /* PRIVATE */
-        9: 2544:png_gt(size_t a, size_t b)
+       18: 2544:png_gt(size_t a, size_t b)
         -: 2545:{
-        9: 2546:   return a > b;
+       18: 2546:   return a > b;
         -: 2547:}
         -: 2548:#else
         -: 2549:#   define png_gt(a,b) ((a) > (b))
         -: 2550:#endif
         -: 2551:
         -: 2552:void /* PRIVATE */
-        9: 2553:png_check_IHDR(png_const_structrp png_ptr,
+       18: 2553:png_check_IHDR(png_const_structrp png_ptr,
         -: 2554:    png_uint_32 width, png_uint_32 height, int bit_depth,
         -: 2555:    int color_type, int interlace_type, int compression_type,
         -: 2556:    int filter_type)
         -: 2557:{
-        9: 2558:   int error = 0;
+       18: 2558:   int error = 0;
         -: 2559:
         -: 2560:   /* Check for width and height valid values */
-        9: 2561:   if (width == 0)
+       18: 2561:   if (width == 0)
         -: 2562:   {
     #####: 2563:      png_warning(png_ptr, "Image width is zero in IHDR");
     #####: 2564:      error = 1;
         -: 2565:   }
         -: 2566:
-        9: 2567:   if (width > PNG_UINT_31_MAX)
+       18: 2567:   if (width > PNG_UINT_31_MAX)
         -: 2568:   {
     #####: 2569:      png_warning(png_ptr, "Invalid image width in IHDR");
     #####: 2570:      error = 1;
         -: 2571:   }
         -: 2572:
-        9: 2573:   if (png_gt(((width + 7) & (~7U)),
+       18: 2573:   if (png_gt(((width + 7) & (~7U)),
         -: 2574:       ((PNG_SIZE_MAX
         -: 2575:           - 48        /* big_row_buf hack */
         -: 2576:           - 1)        /* filter byte */
@@ -2595,7 +2595,7 @@
         -: 2593:   }
         -: 2594:
         -: 2595:#ifdef PNG_SET_USER_LIMITS_SUPPORTED
-        9: 2596:   if (width > png_ptr->user_width_max)
+       18: 2596:   if (width > png_ptr->user_width_max)
         -: 2597:#else
         -: 2598:   if (width > PNG_USER_WIDTH_MAX)
         -: 2599:#endif
@@ -2604,20 +2604,20 @@
     #####: 2602:      error = 1;
         -: 2603:   }
         -: 2604:
-        9: 2605:   if (height == 0)
+       18: 2605:   if (height == 0)
         -: 2606:   {
     #####: 2607:      png_warning(png_ptr, "Image height is zero in IHDR");
     #####: 2608:      error = 1;
         -: 2609:   }
         -: 2610:
-        9: 2611:   if (height > PNG_UINT_31_MAX)
+       18: 2611:   if (height > PNG_UINT_31_MAX)
         -: 2612:   {
     #####: 2613:      png_warning(png_ptr, "Invalid image height in IHDR");
     #####: 2614:      error = 1;
         -: 2615:   }
         -: 2616:
         -: 2617:#ifdef PNG_SET_USER_LIMITS_SUPPORTED
-        9: 2618:   if (height > png_ptr->user_height_max)
+       18: 2618:   if (height > png_ptr->user_height_max)
         -: 2619:#else
         -: 2620:   if (height > PNG_USER_HEIGHT_MAX)
         -: 2621:#endif
@@ -2627,36 +2627,36 @@
         -: 2625:   }
         -: 2626:
         -: 2627:   /* Check other values */
-        9: 2628:   if (bit_depth != 1 && bit_depth != 2 && bit_depth != 4 &&
+       18: 2628:   if (bit_depth != 1 && bit_depth != 2 && bit_depth != 4 &&
     #####: 2629:       bit_depth != 8 && bit_depth != 16)
         -: 2630:   {
     #####: 2631:      png_warning(png_ptr, "Invalid bit depth in IHDR");
     #####: 2632:      error = 1;
         -: 2633:   }
         -: 2634:
-        9: 2635:   if (color_type < 0 || color_type == 1 ||
-        9: 2636:       color_type == 5 || color_type > 6)
+       18: 2635:   if (color_type < 0 || color_type == 1 ||
+       18: 2636:       color_type == 5 || color_type > 6)
         -: 2637:   {
     #####: 2638:      png_warning(png_ptr, "Invalid color type in IHDR");
     #####: 2639:      error = 1;
         -: 2640:   }
         -: 2641:
-        9: 2642:   if (((color_type == PNG_COLOR_TYPE_PALETTE) && bit_depth > 8) ||
-        9: 2643:       ((color_type == PNG_COLOR_TYPE_RGB ||
-        9: 2644:         color_type == PNG_COLOR_TYPE_GRAY_ALPHA ||
+       18: 2642:   if (((color_type == PNG_COLOR_TYPE_PALETTE) && bit_depth > 8) ||
+       18: 2643:       ((color_type == PNG_COLOR_TYPE_RGB ||
+       18: 2644:         color_type == PNG_COLOR_TYPE_GRAY_ALPHA ||
         9: 2645:         color_type == PNG_COLOR_TYPE_RGB_ALPHA) && bit_depth < 8))
         -: 2646:   {
     #####: 2647:      png_warning(png_ptr, "Invalid color type/bit depth combination in IHDR");
     #####: 2648:      error = 1;
         -: 2649:   }
         -: 2650:
-        9: 2651:   if (interlace_type >= PNG_INTERLACE_LAST)
+       18: 2651:   if (interlace_type >= PNG_INTERLACE_LAST)
         -: 2652:   {
     #####: 2653:      png_warning(png_ptr, "Unknown interlace method in IHDR");
     #####: 2654:      error = 1;
         -: 2655:   }
         -: 2656:
-        9: 2657:   if (compression_type != PNG_COMPRESSION_TYPE_BASE)
+       18: 2657:   if (compression_type != PNG_COMPRESSION_TYPE_BASE)
         -: 2658:   {
     #####: 2659:      png_warning(png_ptr, "Unknown compression method in IHDR");
     #####: 2660:      error = 1;
@@ -2672,11 +2672,11 @@
         -: 2670:    * 4. The filter_method is 64 and
         -: 2671:    * 5. The color_type is RGB or RGBA
         -: 2672:    */
-       15: 2673:   if ((png_ptr->mode & PNG_HAVE_PNG_SIGNATURE) != 0 &&
-        6: 2674:       png_ptr->mng_features_permitted != 0)
+       30: 2673:   if ((png_ptr->mode & PNG_HAVE_PNG_SIGNATURE) != 0 &&
+       12: 2674:       png_ptr->mng_features_permitted != 0)
     #####: 2675:      png_warning(png_ptr, "MNG features are not allowed in a PNG datastream");
         -: 2676:
-        9: 2677:   if (filter_type != PNG_FILTER_TYPE_BASE)
+       18: 2677:   if (filter_type != PNG_FILTER_TYPE_BASE)
         -: 2678:   {
     #####: 2679:      if (!((png_ptr->mng_features_permitted & PNG_FLAG_MNG_FILTER_64) != 0 &&
     #####: 2680:          (filter_type == PNG_INTRAPIXEL_DIFFERENCING) &&
@@ -2703,9 +2703,9 @@
         -: 2701:   }
         -: 2702:#endif
         -: 2703:
-        9: 2704:   if (error == 1)
+       18: 2704:   if (error == 1)
     #####: 2705:      png_error(png_ptr, "Invalid IHDR data");
-        9: 2706:}
+       18: 2706:}
         -: 2707:
         -: 2708:#if defined(PNG_sCAL_SUPPORTED) || defined(PNG_pCAL_SUPPORTED)
         -: 2709:/* ASCII to fp functions */
@@ -3493,13 +3493,13 @@
         -: 3491:#ifdef PNG_GAMMA_SUPPORTED /* more fixed point functions for gamma */
         -: 3492:/* Calculate a reciprocal, return 0 on div-by-zero or overflow. */
         -: 3493:png_fixed_point
-       21: 3494:png_reciprocal(png_fixed_point a)
+       24: 3494:png_reciprocal(png_fixed_point a)
         -: 3495:{
         -: 3496:#ifdef PNG_FLOATING_ARITHMETIC_SUPPORTED
-       21: 3497:   double r = floor(1E10/a+.5);
+       24: 3497:   double r = floor(1E10/a+.5);
         -: 3498:
-       21: 3499:   if (r <= 2147483647. && r >= -2147483648.)
-       21: 3500:      return (png_fixed_point)r;
+       24: 3499:   if (r <= 2147483647. && r >= -2147483648.)
+       24: 3500:      return (png_fixed_point)r;
         -: 3501:#else
         -: 3502:   png_fixed_point res;
         -: 3503:
@@ -3514,9 +3514,9 @@
         -: 3512: * it is worth doing gamma correction.
         -: 3513: */
         -: 3514:int /* PRIVATE */
-        9: 3515:png_gamma_significant(png_fixed_point gamma_val)
+       12: 3515:png_gamma_significant(png_fixed_point gamma_val)
         -: 3516:{
-        9: 3517:   return gamma_val < PNG_FP_1 - PNG_GAMMA_THRESHOLD_FIXED ||
+       12: 3517:   return gamma_val < PNG_FP_1 - PNG_GAMMA_THRESHOLD_FIXED ||
         -: 3518:       gamma_val > PNG_FP_1 + PNG_GAMMA_THRESHOLD_FIXED;
         -: 3519:}
         -: 3520:#endif
@@ -4141,13 +4141,13 @@
         -: 4139: * tables.
         -: 4140: */
         -: 4141:void /* PRIVATE */
-        4: 4142:png_destroy_gamma_table(png_structrp png_ptr)
+        8: 4142:png_destroy_gamma_table(png_structrp png_ptr)
         -: 4143:{
-        4: 4144:   png_free(png_ptr, png_ptr->gamma_table);
-        4: 4145:   png_ptr->gamma_table = NULL;
+        8: 4144:   png_free(png_ptr, png_ptr->gamma_table);
+        8: 4145:   png_ptr->gamma_table = NULL;
         -: 4146:
         -: 4147:#ifdef PNG_16BIT_SUPPORTED
-        4: 4148:   if (png_ptr->gamma_16_table != NULL)
+        8: 4148:   if (png_ptr->gamma_16_table != NULL)
         -: 4149:   {
         -: 4150:      int i;
     #####: 4151:      int istop = (1 << (8 - png_ptr->gamma_shift));
@@ -4163,13 +4163,13 @@
         -: 4161:#if defined(PNG_READ_BACKGROUND_SUPPORTED) || \
         -: 4162:   defined(PNG_READ_ALPHA_MODE_SUPPORTED) || \
         -: 4163:   defined(PNG_READ_RGB_TO_GRAY_SUPPORTED)
-        4: 4164:   png_free(png_ptr, png_ptr->gamma_from_1);
-        4: 4165:   png_ptr->gamma_from_1 = NULL;
-        4: 4166:   png_free(png_ptr, png_ptr->gamma_to_1);
-        4: 4167:   png_ptr->gamma_to_1 = NULL;
+        8: 4164:   png_free(png_ptr, png_ptr->gamma_from_1);
+        8: 4165:   png_ptr->gamma_from_1 = NULL;
+        8: 4166:   png_free(png_ptr, png_ptr->gamma_to_1);
+        8: 4167:   png_ptr->gamma_to_1 = NULL;
         -: 4168:
         -: 4169:#ifdef PNG_16BIT_SUPPORTED
-        4: 4170:   if (png_ptr->gamma_16_from_1 != NULL)
+        8: 4170:   if (png_ptr->gamma_16_from_1 != NULL)
         -: 4171:   {
         -: 4172:      int i;
     #####: 4173:      int istop = (1 << (8 - png_ptr->gamma_shift));
@@ -4180,7 +4180,7 @@
     #####: 4178:   png_free(png_ptr, png_ptr->gamma_16_from_1);
     #####: 4179:   png_ptr->gamma_16_from_1 = NULL;
         -: 4180:   }
-        4: 4181:   if (png_ptr->gamma_16_to_1 != NULL)
+        8: 4181:   if (png_ptr->gamma_16_to_1 != NULL)
         -: 4182:   {
         -: 4183:      int i;
     #####: 4184:      int istop = (1 << (8 - png_ptr->gamma_shift));
@@ -4193,7 +4193,7 @@
         -: 4191:   }
         -: 4192:#endif /* 16BIT */
         -: 4193:#endif /* READ_BACKGROUND || READ_ALPHA_MODE || RGB_TO_GRAY */
-        4: 4194:}
+        8: 4194:}
         -: 4195:
         -: 4196:/* We build the 8- or 16-bit gamma tables here.  Note that for 16-bit
         -: 4197: * tables, we don't make a full table if we are reducing to 8-bit in

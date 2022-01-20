@@ -98,14 +98,14 @@
         -:   96:#if defined(PNG_READ_INTERLACING_SUPPORTED) || \
         -:   97:    defined(PNG_WRITE_INTERLACING_SUPPORTED)
         -:   98:int PNGAPI
-        6:   99:png_set_interlace_handling(png_structrp png_ptr)
+       12:   99:png_set_interlace_handling(png_structrp png_ptr)
         -:  100:{
         -:  101:   png_debug(1, "in png_set_interlace handling");
         -:  102:
-        6:  103:   if (png_ptr != 0 && png_ptr->interlaced != 0)
+       12:  103:   if (png_ptr != 0 && png_ptr->interlaced != 0)
         -:  104:   {
-        6:  105:      png_ptr->transformations |= PNG_INTERLACE;
-        6:  106:      return (7);
+       12:  105:      png_ptr->transformations |= PNG_INTERLACE;
+       12:  106:      return (7);
         -:  107:   }
         -:  108:
     #####:  109:   return (1);
@@ -698,9 +698,9 @@
         -:  696:    defined(PNG_WRITE_CHECK_FOR_INVALID_INDEX_SUPPORTED)
         -:  697:/* Added at libpng-1.5.10 */
         -:  698:void /* PRIVATE */
-    #####:  699:png_do_check_palette_indexes(png_structrp png_ptr, png_row_infop row_info)
+     1692:  699:png_do_check_palette_indexes(png_structrp png_ptr, png_row_infop row_info)
         -:  700:{
-    #####:  701:   if (png_ptr->num_palette < (1 << row_info->bit_depth) &&
+     1692:  701:   if (png_ptr->num_palette < (1 << row_info->bit_depth) &&
     #####:  702:      png_ptr->num_palette > 0) /* num_palette can be 0 in MNG files */
         -:  703:   {
         -:  704:      /* Calculations moved outside switch in an attempt to stop different
@@ -794,7 +794,7 @@
     #####:  792:            break;
         -:  793:      }
         -:  794:   }
-    #####:  795:}
+     1692:  795:}
         -:  796:#endif /* CHECK_FOR_INVALID_INDEX */
         -:  797:
         -:  798:#if defined(PNG_READ_USER_TRANSFORM_SUPPORTED) || \
