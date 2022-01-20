@@ -16,4 +16,13 @@ gcov *.c
 ./pngtest contrib/gregbook/toucan.png
 gcov *.c
 
+./pngtest our_tests/test1.png
+gcov *.c
+
+./pngtest our_tests/test2.png
+gcov *.c
+
+./pngtest our_tests/test3.png
+gcov *.c
+
 rm *.gcda pngout.png
