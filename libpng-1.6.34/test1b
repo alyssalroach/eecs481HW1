@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# Stops on errors and prints commands
+
+# Stop on errors, print commands
+# See https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
+set -Eeuo pipefail
+set -x
+
+sh ./configure CFLAGS="--coverage -static"
+make clean ; make 
+
+./pngtest tests1b/basi6a16.png
+gcov *.c
+
+./pngtest tests1b/basn0g02.png
+gcov *.c
+
+./pngtest tests1b/s01i3p01.png
+gcov *.c
+
+./pngtest tests1b/test60.png
+gcov *.c
+
+./pngtest tests1b/s02n3p01.png
+gcov *.c
+
+./pngtest tests1b/basn3p01.png
+gcov *.c
+
+./pngtest tests1b/cs8n2c08.png
+gcov *.c
+
+./pngtest tests1b/basn0g16.png
+gcov *.c
+
+./pngtest tests1b/pngnow.png
+gcov *.c
+
+./pngtest tests1b/pngbar.png
+gcov *.c
+
+./pngtest tests1b/pngtest.png
+gcov *.c
+
+./pngtest tests1b/toucan.png
+gcov *.c
+
+./pngtest tests1b/test61.png
+gcov *.c
+
+./pngtest tests1b/test62.png
+gcov *.c
+
+./pngtest tests1b/test63.png
+gcov *.c
+
+./pngtest tests1b/tbyn3p08.png
+gcov *.c
+
+./pngtest tests1b/f04n2c08.png
+gcov *.c
+
+./pngtest tests1b/g07n0g16.png
+gcov *.c
+
+./pngtest tests1b/z09n2c08.png
+gcov *.c
+
+$ rm *.gcda pngout.png

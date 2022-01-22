@@ -24,22 +24,22 @@
         -:   22:
         -:   23:#ifdef PNG_bKGD_SUPPORTED
         -:   24:void PNGAPI
-        6:   25:png_set_bKGD(png_const_structrp png_ptr, png_inforp info_ptr,
+       12:   25:png_set_bKGD(png_const_structrp png_ptr, png_inforp info_ptr,
         -:   26:    png_const_color_16p background)
         -:   27:{
         -:   28:   png_debug1(1, "in %s storage function", "bKGD");
         -:   29:
-        6:   30:   if (png_ptr == NULL || info_ptr == NULL || background == NULL)
+       12:   30:   if (png_ptr == NULL || info_ptr == NULL || background == NULL)
     #####:   31:      return;
         -:   32:
-        6:   33:   info_ptr->background = *background;
-        6:   34:   info_ptr->valid |= PNG_INFO_bKGD;
+       12:   33:   info_ptr->background = *background;
+       12:   34:   info_ptr->valid |= PNG_INFO_bKGD;
         -:   35:}
         -:   36:#endif
         -:   37:
         -:   38:#ifdef PNG_cHRM_SUPPORTED
         -:   39:void PNGFAPI
-        6:   40:png_set_cHRM_fixed(png_const_structrp png_ptr, png_inforp info_ptr,
+        9:   40:png_set_cHRM_fixed(png_const_structrp png_ptr, png_inforp info_ptr,
         -:   41:    png_fixed_point white_x, png_fixed_point white_y, png_fixed_point red_x,
         -:   42:    png_fixed_point red_y, png_fixed_point green_x, png_fixed_point green_y,
         -:   43:    png_fixed_point blue_x, png_fixed_point blue_y)
@@ -48,23 +48,23 @@
         -:   46:
         -:   47:   png_debug1(1, "in %s storage function", "cHRM fixed");
         -:   48:
-        6:   49:   if (png_ptr == NULL || info_ptr == NULL)
+        9:   49:   if (png_ptr == NULL || info_ptr == NULL)
     #####:   50:      return;
         -:   51:
-        6:   52:   xy.redx = red_x;
-        6:   53:   xy.redy = red_y;
-        6:   54:   xy.greenx = green_x;
-        6:   55:   xy.greeny = green_y;
-        6:   56:   xy.bluex = blue_x;
-        6:   57:   xy.bluey = blue_y;
-        6:   58:   xy.whitex = white_x;
-        6:   59:   xy.whitey = white_y;
+        9:   52:   xy.redx = red_x;
+        9:   53:   xy.redy = red_y;
+        9:   54:   xy.greenx = green_x;
+        9:   55:   xy.greeny = green_y;
+        9:   56:   xy.bluex = blue_x;
+        9:   57:   xy.bluey = blue_y;
+        9:   58:   xy.whitex = white_x;
+        9:   59:   xy.whitey = white_y;
         -:   60:
-        6:   61:   if (png_colorspace_set_chromaticities(png_ptr, &info_ptr->colorspace, &xy,
+        9:   61:   if (png_colorspace_set_chromaticities(png_ptr, &info_ptr->colorspace, &xy,
         -:   62:       2/* override with app values*/) != 0)
-        6:   63:      info_ptr->colorspace.flags |= PNG_COLORSPACE_FROM_cHRM;
+        9:   63:      info_ptr->colorspace.flags |= PNG_COLORSPACE_FROM_cHRM;
         -:   64:
-        6:   65:   png_colorspace_sync_info(png_ptr, info_ptr);
+        9:   65:   png_colorspace_sync_info(png_ptr, info_ptr);
         -:   66:}
         -:   67:
         -:   68:void PNGFAPI
@@ -147,54 +147,54 @@
     #####:  145:}
         -:  146:
         -:  147:void PNGAPI
-       12:  148:png_set_eXIf_1(png_const_structrp png_ptr, png_inforp info_ptr,
+       30:  148:png_set_eXIf_1(png_const_structrp png_ptr, png_inforp info_ptr,
         -:  149:    const png_uint_32 num_exif, const png_bytep eXIf_buf)
         -:  150:{
         -:  151:   int i;
         -:  152:
         -:  153:   png_debug1(1, "in %s storage function", "eXIf");
         -:  154:
-       12:  155:   if (png_ptr == NULL || info_ptr == NULL)
+       30:  155:   if (png_ptr == NULL || info_ptr == NULL)
     #####:  156:      return;
         -:  157:
-       12:  158:   if (info_ptr->exif)
+       30:  158:   if (info_ptr->exif)
         -:  159:   {
     #####:  160:      png_free(png_ptr, info_ptr->exif);
     #####:  161:      info_ptr->exif = NULL;
         -:  162:   }
         -:  163:
-       12:  164:   info_ptr->num_exif = num_exif;
+       30:  164:   info_ptr->num_exif = num_exif;
         -:  165:
-       12:  166:   info_ptr->exif = png_voidcast(png_bytep, png_malloc_warn(png_ptr,
+       30:  166:   info_ptr->exif = png_voidcast(png_bytep, png_malloc_warn(png_ptr,
         -:  167:       info_ptr->num_exif));
         -:  168:
-       12:  169:   if (info_ptr->exif == NULL)
+       30:  169:   if (info_ptr->exif == NULL)
         -:  170:   {
     #####:  171:      png_warning(png_ptr, "Insufficient memory for eXIf chunk data");
     #####:  172:      return;
         -:  173:   }
         -:  174:
-       12:  175:   info_ptr->free_me |= PNG_FREE_EXIF;
+       30:  175:   info_ptr->free_me |= PNG_FREE_EXIF;
         -:  176:
-     1224:  177:   for (i = 0; i < (int) info_ptr->num_exif; i++)
-     1212:  178:      info_ptr->exif[i] = eXIf_buf[i];
+     3798:  177:   for (i = 0; i < (int) info_ptr->num_exif; i++)
+     3768:  178:      info_ptr->exif[i] = eXIf_buf[i];
         -:  179:
-       12:  180:   info_ptr->valid |= PNG_INFO_eXIf;
+       30:  180:   info_ptr->valid |= PNG_INFO_eXIf;
         -:  181:}
         -:  182:#endif /* eXIf */
         -:  183:
         -:  184:#ifdef PNG_gAMA_SUPPORTED
         -:  185:void PNGFAPI
-        9:  186:png_set_gAMA_fixed(png_const_structrp png_ptr, png_inforp info_ptr,
+       39:  186:png_set_gAMA_fixed(png_const_structrp png_ptr, png_inforp info_ptr,
         -:  187:    png_fixed_point file_gamma)
         -:  188:{
         -:  189:   png_debug1(1, "in %s storage function", "gAMA");
         -:  190:
-        9:  191:   if (png_ptr == NULL || info_ptr == NULL)
+       39:  191:   if (png_ptr == NULL || info_ptr == NULL)
     #####:  192:      return;
         -:  193:
-        9:  194:   png_colorspace_set_gamma(png_ptr, &info_ptr->colorspace, file_gamma);
-        9:  195:   png_colorspace_sync_info(png_ptr, info_ptr);
+       39:  194:   png_colorspace_set_gamma(png_ptr, &info_ptr->colorspace, file_gamma);
+       39:  195:   png_colorspace_sync_info(png_ptr, info_ptr);
         -:  196:}
         -:  197:
         -:  198:#  ifdef PNG_FLOATING_POINT_SUPPORTED
@@ -253,43 +253,43 @@
         -:  251:#endif
         -:  252:
         -:  253:void PNGAPI
-       30:  254:png_set_IHDR(png_const_structrp png_ptr, png_inforp info_ptr,
+      114:  254:png_set_IHDR(png_const_structrp png_ptr, png_inforp info_ptr,
         -:  255:    png_uint_32 width, png_uint_32 height, int bit_depth,
         -:  256:    int color_type, int interlace_type, int compression_type,
         -:  257:    int filter_type)
         -:  258:{
         -:  259:   png_debug1(1, "in %s storage function", "IHDR");
         -:  260:
-       30:  261:   if (png_ptr == NULL || info_ptr == NULL)
+      114:  261:   if (png_ptr == NULL || info_ptr == NULL)
     #####:  262:      return;
         -:  263:
-       30:  264:   info_ptr->width = width;
-       30:  265:   info_ptr->height = height;
-       30:  266:   info_ptr->bit_depth = (png_byte)bit_depth;
-       30:  267:   info_ptr->color_type = (png_byte)color_type;
-       30:  268:   info_ptr->compression_type = (png_byte)compression_type;
-       30:  269:   info_ptr->filter_type = (png_byte)filter_type;
-       30:  270:   info_ptr->interlace_type = (png_byte)interlace_type;
+      114:  264:   info_ptr->width = width;
+      114:  265:   info_ptr->height = height;
+      114:  266:   info_ptr->bit_depth = (png_byte)bit_depth;
+      114:  267:   info_ptr->color_type = (png_byte)color_type;
+      114:  268:   info_ptr->compression_type = (png_byte)compression_type;
+      114:  269:   info_ptr->filter_type = (png_byte)filter_type;
+      114:  270:   info_ptr->interlace_type = (png_byte)interlace_type;
         -:  271:
-      150:  272:   png_check_IHDR (png_ptr, info_ptr->width, info_ptr->height,
-       90:  273:       info_ptr->bit_depth, info_ptr->color_type, info_ptr->interlace_type,
-       60:  274:       info_ptr->compression_type, info_ptr->filter_type);
+      570:  272:   png_check_IHDR (png_ptr, info_ptr->width, info_ptr->height,
+      342:  273:       info_ptr->bit_depth, info_ptr->color_type, info_ptr->interlace_type,
+      228:  274:       info_ptr->compression_type, info_ptr->filter_type);
         -:  275:
-       30:  276:   if (info_ptr->color_type == PNG_COLOR_TYPE_PALETTE)
-        6:  277:      info_ptr->channels = 1;
+      114:  276:   if (info_ptr->color_type == PNG_COLOR_TYPE_PALETTE)
+       42:  277:      info_ptr->channels = 1;
         -:  278:
-       24:  279:   else if ((info_ptr->color_type & PNG_COLOR_MASK_COLOR) != 0)
-       24:  280:      info_ptr->channels = 3;
+       72:  279:   else if ((info_ptr->color_type & PNG_COLOR_MASK_COLOR) != 0)
+       54:  280:      info_ptr->channels = 3;
         -:  281:
         -:  282:   else
-    #####:  283:      info_ptr->channels = 1;
+       18:  283:      info_ptr->channels = 1;
         -:  284:
-       30:  285:   if ((info_ptr->color_type & PNG_COLOR_MASK_ALPHA) != 0)
-       24:  286:      info_ptr->channels++;
+      114:  285:   if ((info_ptr->color_type & PNG_COLOR_MASK_ALPHA) != 0)
+       36:  286:      info_ptr->channels++;
         -:  287:
-       30:  288:   info_ptr->pixel_depth = (png_byte)(info_ptr->channels * info_ptr->bit_depth);
+      114:  288:   info_ptr->pixel_depth = (png_byte)(info_ptr->channels * info_ptr->bit_depth);
         -:  289:
-       30:  290:   info_ptr->rowbytes = PNG_ROWBYTES(info_ptr->pixel_depth, width);
+      114:  290:   info_ptr->rowbytes = PNG_ROWBYTES(info_ptr->pixel_depth, width);
         -:  291:}
         -:  292:
         -:  293:#ifdef PNG_oFFs_SUPPORTED
@@ -555,23 +555,23 @@
         -:  553:
         -:  554:#ifdef PNG_pHYs_SUPPORTED
         -:  555:void PNGAPI
-       12:  556:png_set_pHYs(png_const_structrp png_ptr, png_inforp info_ptr,
+       30:  556:png_set_pHYs(png_const_structrp png_ptr, png_inforp info_ptr,
         -:  557:    png_uint_32 res_x, png_uint_32 res_y, int unit_type)
         -:  558:{
         -:  559:   png_debug1(1, "in %s storage function", "pHYs");
         -:  560:
-       12:  561:   if (png_ptr == NULL || info_ptr == NULL)
+       30:  561:   if (png_ptr == NULL || info_ptr == NULL)
     #####:  562:      return;
         -:  563:
-       12:  564:   info_ptr->x_pixels_per_unit = res_x;
-       12:  565:   info_ptr->y_pixels_per_unit = res_y;
-       12:  566:   info_ptr->phys_unit_type = (png_byte)unit_type;
-       12:  567:   info_ptr->valid |= PNG_INFO_pHYs;
+       30:  564:   info_ptr->x_pixels_per_unit = res_x;
+       30:  565:   info_ptr->y_pixels_per_unit = res_y;
+       30:  566:   info_ptr->phys_unit_type = (png_byte)unit_type;
+       30:  567:   info_ptr->valid |= PNG_INFO_pHYs;
         -:  568:}
         -:  569:#endif
         -:  570:
         -:  571:void PNGAPI
-        6:  572:png_set_PLTE(png_structrp png_ptr, png_inforp info_ptr,
+       42:  572:png_set_PLTE(png_structrp png_ptr, png_inforp info_ptr,
         -:  573:    png_const_colorp palette, int num_palette)
         -:  574:{
         -:  575:
@@ -579,13 +579,13 @@
         -:  577:
         -:  578:   png_debug1(1, "in %s storage function", "PLTE");
         -:  579:
-        6:  580:   if (png_ptr == NULL || info_ptr == NULL)
+       42:  580:   if (png_ptr == NULL || info_ptr == NULL)
     #####:  581:      return;
         -:  582:
-       12:  583:   max_palette_length = (info_ptr->color_type == PNG_COLOR_TYPE_PALETTE) ?
-        6:  584:      (1 << info_ptr->bit_depth) : PNG_MAX_PALETTE_LENGTH;
+       84:  583:   max_palette_length = (info_ptr->color_type == PNG_COLOR_TYPE_PALETTE) ?
+       42:  584:      (1 << info_ptr->bit_depth) : PNG_MAX_PALETTE_LENGTH;
         -:  585:
-        6:  586:   if (num_palette < 0 || num_palette > (int) max_palette_length)
+       42:  586:   if (num_palette < 0 || num_palette > (int) max_palette_length)
         -:  587:   {
     #####:  588:      if (info_ptr->color_type == PNG_COLOR_TYPE_PALETTE)
     #####:  589:         png_error(png_ptr, "Invalid palette length");
@@ -598,7 +598,7 @@
         -:  596:      }
         -:  597:   }
         -:  598:
-        6:  599:   if ((num_palette > 0 && palette == NULL) ||
+       42:  599:   if ((num_palette > 0 && palette == NULL) ||
         -:  600:      (num_palette == 0
         -:  601:#        ifdef PNG_MNG_FEATURES_SUPPORTED
     #####:  602:            && (png_ptr->mng_features_permitted & PNG_FLAG_MNG_EMPTY_PLTE) == 0
@@ -615,52 +615,52 @@
         -:  613:    * 1.6.0: the above statement appears to be incorrect; something has to set
         -:  614:    * the palette inside png_struct on read.
         -:  615:    */
-        6:  616:   png_free_data(png_ptr, info_ptr, PNG_FREE_PLTE, 0);
+       42:  616:   png_free_data(png_ptr, info_ptr, PNG_FREE_PLTE, 0);
         -:  617:
         -:  618:   /* Changed in libpng-1.2.1 to allocate PNG_MAX_PALETTE_LENGTH instead
         -:  619:    * of num_palette entries, in case of an invalid PNG file or incorrect
         -:  620:    * call to png_set_PLTE() with too-large sample values.
         -:  621:    */
-        6:  622:   png_ptr->palette = png_voidcast(png_colorp, png_calloc(png_ptr,
+       42:  622:   png_ptr->palette = png_voidcast(png_colorp, png_calloc(png_ptr,
         -:  623:       PNG_MAX_PALETTE_LENGTH * (sizeof (png_color))));
         -:  624:
-        6:  625:   if (num_palette > 0)
-        6:  626:      memcpy(png_ptr->palette, palette, (unsigned int)num_palette *
+       42:  625:   if (num_palette > 0)
+       42:  626:      memcpy(png_ptr->palette, palette, (unsigned int)num_palette *
         -:  627:          (sizeof (png_color)));
-        6:  628:   info_ptr->palette = png_ptr->palette;
-        6:  629:   info_ptr->num_palette = png_ptr->num_palette = (png_uint_16)num_palette;
+       42:  628:   info_ptr->palette = png_ptr->palette;
+       42:  629:   info_ptr->num_palette = png_ptr->num_palette = (png_uint_16)num_palette;
         -:  630:
-        6:  631:   info_ptr->free_me |= PNG_FREE_PLTE;
+       42:  631:   info_ptr->free_me |= PNG_FREE_PLTE;
         -:  632:
-        6:  633:   info_ptr->valid |= PNG_INFO_PLTE;
+       42:  633:   info_ptr->valid |= PNG_INFO_PLTE;
         -:  634:}
         -:  635:
         -:  636:#ifdef PNG_sBIT_SUPPORTED
         -:  637:void PNGAPI
-        6:  638:png_set_sBIT(png_const_structrp png_ptr, png_inforp info_ptr,
+       18:  638:png_set_sBIT(png_const_structrp png_ptr, png_inforp info_ptr,
         -:  639:    png_const_color_8p sig_bit)
         -:  640:{
         -:  641:   png_debug1(1, "in %s storage function", "sBIT");
         -:  642:
-        6:  643:   if (png_ptr == NULL || info_ptr == NULL || sig_bit == NULL)
+       18:  643:   if (png_ptr == NULL || info_ptr == NULL || sig_bit == NULL)
     #####:  644:      return;
         -:  645:
-        6:  646:   info_ptr->sig_bit = *sig_bit;
-        6:  647:   info_ptr->valid |= PNG_INFO_sBIT;
+       18:  646:   info_ptr->sig_bit = *sig_bit;
+       18:  647:   info_ptr->valid |= PNG_INFO_sBIT;
         -:  648:}
         -:  649:#endif
         -:  650:
         -:  651:#ifdef PNG_sRGB_SUPPORTED
         -:  652:void PNGAPI
-        6:  653:png_set_sRGB(png_const_structrp png_ptr, png_inforp info_ptr, int srgb_intent)
+        9:  653:png_set_sRGB(png_const_structrp png_ptr, png_inforp info_ptr, int srgb_intent)
         -:  654:{
         -:  655:   png_debug1(1, "in %s storage function", "sRGB");
         -:  656:
-        6:  657:   if (png_ptr == NULL || info_ptr == NULL)
+        9:  657:   if (png_ptr == NULL || info_ptr == NULL)
     #####:  658:      return;
         -:  659:
-        6:  660:   (void)png_colorspace_set_sRGB(png_ptr, &info_ptr->colorspace, srgb_intent);
-        6:  661:   png_colorspace_sync_info(png_ptr, info_ptr);
+        9:  660:   (void)png_colorspace_set_sRGB(png_ptr, &info_ptr->colorspace, srgb_intent);
+        9:  661:   png_colorspace_sync_info(png_ptr, info_ptr);
         -:  662:}
         -:  663:
         -:  664:void PNGAPI
@@ -687,7 +687,7 @@
         -:  685:
         -:  686:#ifdef PNG_iCCP_SUPPORTED
         -:  687:void PNGAPI
-        3:  688:png_set_iCCP(png_const_structrp png_ptr, png_inforp info_ptr,
+       12:  688:png_set_iCCP(png_const_structrp png_ptr, png_inforp info_ptr,
         -:  689:    png_const_charp name, int compression_type,
         -:  690:    png_const_bytep profile, png_uint_32 proflen)
         -:  691:{
@@ -697,10 +697,10 @@
         -:  695:
         -:  696:   png_debug1(1, "in %s storage function", "iCCP");
         -:  697:
-        3:  698:   if (png_ptr == NULL || info_ptr == NULL || name == NULL || profile == NULL)
+       12:  698:   if (png_ptr == NULL || info_ptr == NULL || name == NULL || profile == NULL)
     #####:  699:      return;
         -:  700:
-        3:  701:   if (compression_type != PNG_COMPRESSION_TYPE_BASE)
+       12:  701:   if (compression_type != PNG_COMPRESSION_TYPE_BASE)
     #####:  702:      png_app_error(png_ptr, "Invalid iCCP compression method");
         -:  703:
         -:  704:   /* Set the colorspace first because this validates the profile; do not
@@ -710,35 +710,35 @@
         -:  708:    * write case it has not yet been stored in png_ptr.
         -:  709:    */
         -:  710:   {
-        3:  711:      int result = png_colorspace_set_ICC(png_ptr, &info_ptr->colorspace, name,
-        3:  712:          proflen, profile, info_ptr->color_type);
+       12:  711:      int result = png_colorspace_set_ICC(png_ptr, &info_ptr->colorspace, name,
+       12:  712:          proflen, profile, info_ptr->color_type);
         -:  713:
-        3:  714:      png_colorspace_sync_info(png_ptr, info_ptr);
+       12:  714:      png_colorspace_sync_info(png_ptr, info_ptr);
         -:  715:
         -:  716:      /* Don't do any of the copying if the profile was bad, or inconsistent. */
-        3:  717:      if (result == 0)
+       12:  717:      if (result == 0)
     #####:  718:         return;
         -:  719:
         -:  720:      /* But do write the gAMA and cHRM chunks from the profile. */
-        3:  721:      info_ptr->colorspace.flags |=
+       12:  721:      info_ptr->colorspace.flags |=
         -:  722:         PNG_COLORSPACE_FROM_gAMA|PNG_COLORSPACE_FROM_cHRM;
         -:  723:   }
         -:  724:
-        3:  725:   length = strlen(name)+1;
-        3:  726:   new_iccp_name = png_voidcast(png_charp, png_malloc_warn(png_ptr, length));
+       12:  725:   length = strlen(name)+1;
+       12:  726:   new_iccp_name = png_voidcast(png_charp, png_malloc_warn(png_ptr, length));
         -:  727:
-        3:  728:   if (new_iccp_name == NULL)
+       12:  728:   if (new_iccp_name == NULL)
         -:  729:   {
     #####:  730:      png_benign_error(png_ptr, "Insufficient memory to process iCCP chunk");
         -:  731:
     #####:  732:      return;
         -:  733:   }
         -:  734:
-        3:  735:   memcpy(new_iccp_name, name, length);
-        3:  736:   new_iccp_profile = png_voidcast(png_bytep,
+       12:  735:   memcpy(new_iccp_name, name, length);
+       12:  736:   new_iccp_profile = png_voidcast(png_bytep,
         -:  737:       png_malloc_warn(png_ptr, proflen));
         -:  738:
-        3:  739:   if (new_iccp_profile == NULL)
+       12:  739:   if (new_iccp_profile == NULL)
         -:  740:   {
     #####:  741:      png_free(png_ptr, new_iccp_name);
     #####:  742:      png_benign_error(png_ptr,
@@ -747,32 +747,32 @@
     #####:  745:      return;
         -:  746:   }
         -:  747:
-        3:  748:   memcpy(new_iccp_profile, profile, proflen);
+       12:  748:   memcpy(new_iccp_profile, profile, proflen);
         -:  749:
-        3:  750:   png_free_data(png_ptr, info_ptr, PNG_FREE_ICCP, 0);
+       12:  750:   png_free_data(png_ptr, info_ptr, PNG_FREE_ICCP, 0);
         -:  751:
-        3:  752:   info_ptr->iccp_proflen = proflen;
-        3:  753:   info_ptr->iccp_name = new_iccp_name;
-        3:  754:   info_ptr->iccp_profile = new_iccp_profile;
-        3:  755:   info_ptr->free_me |= PNG_FREE_ICCP;
-        3:  756:   info_ptr->valid |= PNG_INFO_iCCP;
+       12:  752:   info_ptr->iccp_proflen = proflen;
+       12:  753:   info_ptr->iccp_name = new_iccp_name;
+       12:  754:   info_ptr->iccp_profile = new_iccp_profile;
+       12:  755:   info_ptr->free_me |= PNG_FREE_ICCP;
+       12:  756:   info_ptr->valid |= PNG_INFO_iCCP;
         -:  757:}
         -:  758:#endif
         -:  759:
         -:  760:#ifdef PNG_TEXT_SUPPORTED
         -:  761:void PNGAPI
-        9:  762:png_set_text(png_const_structrp png_ptr, png_inforp info_ptr,
+       24:  762:png_set_text(png_const_structrp png_ptr, png_inforp info_ptr,
         -:  763:    png_const_textp text_ptr, int num_text)
         -:  764:{
         -:  765:   int ret;
-        9:  766:   ret = png_set_text_2(png_ptr, info_ptr, text_ptr, num_text);
+       24:  766:   ret = png_set_text_2(png_ptr, info_ptr, text_ptr, num_text);
         -:  767:
-        9:  768:   if (ret != 0)
+       24:  768:   if (ret != 0)
     #####:  769:      png_error(png_ptr, "Insufficient memory to store text");
-        9:  770:}
+       24:  770:}
         -:  771:
         -:  772:int /* PRIVATE */
-       18:  773:png_set_text_2(png_const_structrp png_ptr, png_inforp info_ptr,
+       48:  773:png_set_text_2(png_const_structrp png_ptr, png_inforp info_ptr,
         -:  774:    png_const_textp text_ptr, int num_text)
         -:  775:{
         -:  776:   int i;
@@ -780,7 +780,7 @@
         -:  778:   png_debug1(1, "in %lx storage function", png_ptr == NULL ? 0xabadca11U :
         -:  779:      (unsigned long)png_ptr->chunk_name);
         -:  780:
-       18:  781:   if (png_ptr == NULL || info_ptr == NULL || num_text <= 0 || text_ptr == NULL)
+       48:  781:   if (png_ptr == NULL || info_ptr == NULL || num_text <= 0 || text_ptr == NULL)
     #####:  782:      return(0);
         -:  783:
         -:  784:   /* Make sure we have enough space in the "text" array in info_struct
@@ -788,21 +788,21 @@
         -:  786:    * because max_text >= num_text (anyway, subtract of two positive integers
         -:  787:    * can't overflow in any case.)
         -:  788:    */
-       18:  789:   if (num_text > info_ptr->max_text - info_ptr->num_text)
+       48:  789:   if (num_text > info_ptr->max_text - info_ptr->num_text)
         -:  790:   {
-       18:  791:      int old_num_text = info_ptr->num_text;
+       48:  791:      int old_num_text = info_ptr->num_text;
         -:  792:      int max_text;
-       18:  793:      png_textp new_text = NULL;
+       48:  793:      png_textp new_text = NULL;
         -:  794:
         -:  795:      /* Calculate an appropriate max_text, checking for overflow. */
-       18:  796:      max_text = old_num_text;
-       18:  797:      if (num_text <= INT_MAX - max_text)
+       48:  796:      max_text = old_num_text;
+       48:  797:      if (num_text <= INT_MAX - max_text)
         -:  798:      {
-       18:  799:         max_text += num_text;
+       48:  799:         max_text += num_text;
         -:  800:
         -:  801:         /* Round up to a multiple of 8 */
-       18:  802:         if (max_text < INT_MAX-8)
-       18:  803:            max_text = (max_text + 8) & ~0x7;
+       48:  802:         if (max_text < INT_MAX-8)
+       48:  803:            max_text = (max_text + 8) & ~0x7;
         -:  804:
         -:  805:         else
     #####:  806:            max_text = INT_MAX;
@@ -810,12 +810,12 @@
         -:  808:         /* Now allocate a new array and copy the old members in; this does all
         -:  809:          * the overflow checks.
         -:  810:          */
-       18:  811:         new_text = png_voidcast(png_textp,png_realloc_array(png_ptr,
+       48:  811:         new_text = png_voidcast(png_textp,png_realloc_array(png_ptr,
         -:  812:             info_ptr->text, old_num_text, max_text-old_num_text,
         -:  813:             sizeof *new_text));
         -:  814:      }
         -:  815:
-       18:  816:      if (new_text == NULL)
+       48:  816:      if (new_text == NULL)
         -:  817:      {
     #####:  818:         png_chunk_report(png_ptr, "too many text chunks",
         -:  819:             PNG_CHUNK_WRITE_ERROR);
@@ -823,39 +823,39 @@
     #####:  821:         return 1;
         -:  822:      }
         -:  823:
-       18:  824:      png_free(png_ptr, info_ptr->text);
+       48:  824:      png_free(png_ptr, info_ptr->text);
         -:  825:
-       18:  826:      info_ptr->text = new_text;
-       18:  827:      info_ptr->free_me |= PNG_FREE_TEXT;
-       18:  828:      info_ptr->max_text = max_text;
+       48:  826:      info_ptr->text = new_text;
+       48:  827:      info_ptr->free_me |= PNG_FREE_TEXT;
+       48:  828:      info_ptr->max_text = max_text;
         -:  829:      /* num_text is adjusted below as the entries are copied in */
         -:  830:
         -:  831:      png_debug1(3, "allocated %d entries for info_ptr->text", max_text);
         -:  832:   }
         -:  833:
-       36:  834:   for (i = 0; i < num_text; i++)
+       96:  834:   for (i = 0; i < num_text; i++)
         -:  835:   {
         -:  836:      size_t text_length, key_len;
         -:  837:      size_t lang_len, lang_key_len;
-       18:  838:      png_textp textp = &(info_ptr->text[info_ptr->num_text]);
+       48:  838:      png_textp textp = &(info_ptr->text[info_ptr->num_text]);
         -:  839:
-       18:  840:      if (text_ptr[i].key == NULL)
+       48:  840:      if (text_ptr[i].key == NULL)
     #####:  841:          continue;
         -:  842:
-       36:  843:      if (text_ptr[i].compression < PNG_TEXT_COMPRESSION_NONE ||
-       18:  844:          text_ptr[i].compression >= PNG_TEXT_COMPRESSION_LAST)
+       96:  843:      if (text_ptr[i].compression < PNG_TEXT_COMPRESSION_NONE ||
+       48:  844:          text_ptr[i].compression >= PNG_TEXT_COMPRESSION_LAST)
         -:  845:      {
     #####:  846:         png_chunk_report(png_ptr, "text compression mode is out of range",
         -:  847:             PNG_CHUNK_WRITE_ERROR);
     #####:  848:         continue;
         -:  849:      }
         -:  850:
-       18:  851:      key_len = strlen(text_ptr[i].key);
+       48:  851:      key_len = strlen(text_ptr[i].key);
         -:  852:
-       18:  853:      if (text_ptr[i].compression <= 0)
+       48:  853:      if (text_ptr[i].compression <= 0)
         -:  854:      {
-       12:  855:         lang_len = 0;
-       12:  856:         lang_key_len = 0;
+       24:  855:         lang_len = 0;
+       24:  856:         lang_key_len = 0;
         -:  857:      }
         -:  858:
         -:  859:      else
@@ -863,14 +863,14 @@
         -:  861:      {
         -:  862:         /* Set iTXt data */
         -:  863:
-        6:  864:         if (text_ptr[i].lang != NULL)
-        6:  865:            lang_len = strlen(text_ptr[i].lang);
+       24:  864:         if (text_ptr[i].lang != NULL)
+       24:  865:            lang_len = strlen(text_ptr[i].lang);
         -:  866:
         -:  867:         else
     #####:  868:            lang_len = 0;
         -:  869:
-        6:  870:         if (text_ptr[i].lang_key != NULL)
-        6:  871:            lang_key_len = strlen(text_ptr[i].lang_key);
+       24:  870:         if (text_ptr[i].lang_key != NULL)
+       24:  871:            lang_key_len = strlen(text_ptr[i].lang_key);
         -:  872:
         -:  873:         else
     #####:  874:            lang_key_len = 0;
@@ -883,7 +883,7 @@
         -:  881:      }
         -:  882:#  endif
         -:  883:
-       18:  884:      if (text_ptr[i].text == NULL || text_ptr[i].text[0] == '\0')
+       48:  884:      if (text_ptr[i].text == NULL || text_ptr[i].text[0] == '\0')
         -:  885:      {
     #####:  886:         text_length = 0;
         -:  887:#  ifdef PNG_iTXt_SUPPORTED
@@ -897,14 +897,14 @@
         -:  895:
         -:  896:      else
         -:  897:      {
-       18:  898:         text_length = strlen(text_ptr[i].text);
-       18:  899:         textp->compression = text_ptr[i].compression;
+       48:  898:         text_length = strlen(text_ptr[i].text);
+       48:  899:         textp->compression = text_ptr[i].compression;
         -:  900:      }
         -:  901:
-       18:  902:      textp->key = png_voidcast(png_charp,png_malloc_base(png_ptr,
+       48:  902:      textp->key = png_voidcast(png_charp,png_malloc_base(png_ptr,
         -:  903:          key_len + text_length + lang_len + lang_key_len + 4));
         -:  904:
-       18:  905:      if (textp->key == NULL)
+       48:  905:      if (textp->key == NULL)
         -:  906:      {
     #####:  907:         png_chunk_report(png_ptr, "text chunk: out of memory",
         -:  908:             PNG_CHUNK_WRITE_ERROR);
@@ -917,51 +917,51 @@
         -:  915:          (key_len + lang_len + lang_key_len + text_length + 4),
         -:  916:          textp->key);
         -:  917:
-       18:  918:      memcpy(textp->key, text_ptr[i].key, key_len);
-       18:  919:      *(textp->key + key_len) = '\0';
+       48:  918:      memcpy(textp->key, text_ptr[i].key, key_len);
+       48:  919:      *(textp->key + key_len) = '\0';
         -:  920:
-       18:  921:      if (text_ptr[i].compression > 0)
+       48:  921:      if (text_ptr[i].compression > 0)
         -:  922:      {
-        6:  923:         textp->lang = textp->key + key_len + 1;
-        6:  924:         memcpy(textp->lang, text_ptr[i].lang, lang_len);
-        6:  925:         *(textp->lang + lang_len) = '\0';
-        6:  926:         textp->lang_key = textp->lang + lang_len + 1;
-        6:  927:         memcpy(textp->lang_key, text_ptr[i].lang_key, lang_key_len);
-        6:  928:         *(textp->lang_key + lang_key_len) = '\0';
-        6:  929:         textp->text = textp->lang_key + lang_key_len + 1;
+       24:  923:         textp->lang = textp->key + key_len + 1;
+       24:  924:         memcpy(textp->lang, text_ptr[i].lang, lang_len);
+       24:  925:         *(textp->lang + lang_len) = '\0';
+       24:  926:         textp->lang_key = textp->lang + lang_len + 1;
+       24:  927:         memcpy(textp->lang_key, text_ptr[i].lang_key, lang_key_len);
+       24:  928:         *(textp->lang_key + lang_key_len) = '\0';
+       24:  929:         textp->text = textp->lang_key + lang_key_len + 1;
         -:  930:      }
         -:  931:
         -:  932:      else
         -:  933:      {
-       12:  934:         textp->lang=NULL;
-       12:  935:         textp->lang_key=NULL;
-       12:  936:         textp->text = textp->key + key_len + 1;
+       24:  934:         textp->lang=NULL;
+       24:  935:         textp->lang_key=NULL;
+       24:  936:         textp->text = textp->key + key_len + 1;
         -:  937:      }
         -:  938:
-       18:  939:      if (text_length != 0)
-       18:  940:         memcpy(textp->text, text_ptr[i].text, text_length);
+       48:  939:      if (text_length != 0)
+       48:  940:         memcpy(textp->text, text_ptr[i].text, text_length);
         -:  941:
-       18:  942:      *(textp->text + text_length) = '\0';
+       48:  942:      *(textp->text + text_length) = '\0';
         -:  943:
         -:  944:#  ifdef PNG_iTXt_SUPPORTED
-       18:  945:      if (textp->compression > 0)
+       48:  945:      if (textp->compression > 0)
         -:  946:      {
-        6:  947:         textp->text_length = 0;
-        6:  948:         textp->itxt_length = text_length;
+       24:  947:         textp->text_length = 0;
+       24:  948:         textp->itxt_length = text_length;
         -:  949:      }
         -:  950:
         -:  951:      else
         -:  952:#  endif
         -:  953:      {
-       12:  954:         textp->text_length = text_length;
-       12:  955:         textp->itxt_length = 0;
+       24:  954:         textp->text_length = text_length;
+       24:  955:         textp->itxt_length = 0;
         -:  956:      }
         -:  957:
-       18:  958:      info_ptr->num_text++;
+       48:  958:      info_ptr->num_text++;
         -:  959:      png_debug1(3, "transferred text chunk %d", info_ptr->num_text);
         -:  960:   }
         -:  961:
-       18:  962:   return(0);
+       48:  962:   return(0);
         -:  963:}
         -:  964:#endif
         -:  965:
@@ -993,16 +993,16 @@
         -:  991:
         -:  992:#ifdef PNG_tRNS_SUPPORTED
         -:  993:void PNGAPI
-        6:  994:png_set_tRNS(png_structrp png_ptr, png_inforp info_ptr,
+       12:  994:png_set_tRNS(png_structrp png_ptr, png_inforp info_ptr,
         -:  995:    png_const_bytep trans_alpha, int num_trans, png_const_color_16p trans_color)
         -:  996:{
         -:  997:   png_debug1(1, "in %s storage function", "tRNS");
         -:  998:
-        6:  999:   if (png_ptr == NULL || info_ptr == NULL)
+       12:  999:   if (png_ptr == NULL || info_ptr == NULL)
         -: 1000:
     #####: 1001:      return;
         -: 1002:
-        6: 1003:   if (trans_alpha != NULL)
+       12: 1003:   if (trans_alpha != NULL)
         -: 1004:   {
         -: 1005:       /* It may not actually be necessary to set png_ptr->trans_alpha here;
         -: 1006:        * we do it for backward compatibility with the way the png_handle_tRNS
@@ -1013,28 +1013,28 @@
         -: 1011:        * (otherwise it won't be there for the code in pngrtran.c).
         -: 1012:        */
         -: 1013:
-        6: 1014:       png_free_data(png_ptr, info_ptr, PNG_FREE_TRNS, 0);
+       12: 1014:       png_free_data(png_ptr, info_ptr, PNG_FREE_TRNS, 0);
         -: 1015:
-        6: 1016:       if (num_trans > 0 && num_trans <= PNG_MAX_PALETTE_LENGTH)
+       12: 1016:       if (num_trans > 0 && num_trans <= PNG_MAX_PALETTE_LENGTH)
         -: 1017:       {
         -: 1018:         /* Changed from num_trans to PNG_MAX_PALETTE_LENGTH in version 1.2.1 */
-        6: 1019:          info_ptr->trans_alpha = png_voidcast(png_bytep,
+       12: 1019:          info_ptr->trans_alpha = png_voidcast(png_bytep,
         -: 1020:              png_malloc(png_ptr, PNG_MAX_PALETTE_LENGTH));
-        6: 1021:          memcpy(info_ptr->trans_alpha, trans_alpha, (png_size_t)num_trans);
+       12: 1021:          memcpy(info_ptr->trans_alpha, trans_alpha, (png_size_t)num_trans);
         -: 1022:       }
-        6: 1023:       png_ptr->trans_alpha = info_ptr->trans_alpha;
+       12: 1023:       png_ptr->trans_alpha = info_ptr->trans_alpha;
         -: 1024:   }
         -: 1025:
-        6: 1026:   if (trans_color != NULL)
+       12: 1026:   if (trans_color != NULL)
         -: 1027:   {
         -: 1028:#ifdef PNG_WARNINGS_SUPPORTED
-        6: 1029:      if (info_ptr->bit_depth < 16)
+       12: 1029:      if (info_ptr->bit_depth < 16)
         -: 1030:      {
-        6: 1031:         int sample_max = (1 << info_ptr->bit_depth) - 1;
+       12: 1031:         int sample_max = (1 << info_ptr->bit_depth) - 1;
         -: 1032:
-        6: 1033:         if ((info_ptr->color_type == PNG_COLOR_TYPE_GRAY &&
-        6: 1034:             trans_color->gray > sample_max) ||
-        6: 1035:             (info_ptr->color_type == PNG_COLOR_TYPE_RGB &&
+       12: 1033:         if ((info_ptr->color_type == PNG_COLOR_TYPE_GRAY &&
+       12: 1034:             trans_color->gray > sample_max) ||
+       12: 1035:             (info_ptr->color_type == PNG_COLOR_TYPE_RGB &&
     #####: 1036:             (trans_color->red > sample_max ||
     #####: 1037:             trans_color->green > sample_max ||
     #####: 1038:             trans_color->blue > sample_max)))
@@ -1043,18 +1043,18 @@
         -: 1041:      }
         -: 1042:#endif
         -: 1043:
-        6: 1044:      info_ptr->trans_color = *trans_color;
+       12: 1044:      info_ptr->trans_color = *trans_color;
         -: 1045:
-        6: 1046:      if (num_trans == 0)
+       12: 1046:      if (num_trans == 0)
     #####: 1047:         num_trans = 1;
         -: 1048:   }
         -: 1049:
-        6: 1050:   info_ptr->num_trans = (png_uint_16)num_trans;
+       12: 1050:   info_ptr->num_trans = (png_uint_16)num_trans;
         -: 1051:
-        6: 1052:   if (num_trans != 0)
+       12: 1052:   if (num_trans != 0)
         -: 1053:   {
-        6: 1054:      info_ptr->valid |= PNG_INFO_tRNS;
-        6: 1055:      info_ptr->free_me |= PNG_FREE_TRNS;
+       12: 1054:      info_ptr->valid |= PNG_INFO_tRNS;
+       12: 1055:      info_ptr->free_me |= PNG_FREE_TRNS;
         -: 1056:   }
         -: 1057:}
         -: 1058:#endif
@@ -1162,15 +1162,15 @@
         -: 1160:
         -: 1161:#ifdef PNG_STORE_UNKNOWN_CHUNKS_SUPPORTED
         -: 1162:static png_byte
-    #####: 1163:check_location(png_const_structrp png_ptr, int location)
+       12: 1163:check_location(png_const_structrp png_ptr, int location)
         -: 1164:{
-    #####: 1165:   location &= (PNG_HAVE_IHDR|PNG_HAVE_PLTE|PNG_AFTER_IDAT);
+       12: 1165:   location &= (PNG_HAVE_IHDR|PNG_HAVE_PLTE|PNG_AFTER_IDAT);
         -: 1166:
         -: 1167:   /* New in 1.6.0; copy the location and check it.  This is an API
         -: 1168:    * change; previously the app had to use the
         -: 1169:    * png_set_unknown_chunk_location API below for each chunk.
         -: 1170:    */
-    #####: 1171:   if (location == 0 && (png_ptr->mode & PNG_IS_READ_STRUCT) == 0)
+       12: 1171:   if (location == 0 && (png_ptr->mode & PNG_IS_READ_STRUCT) == 0)
         -: 1172:   {
         -: 1173:      /* Write struct, so unknown chunks come from the app */
     #####: 1174:      png_app_warning(png_ptr,
@@ -1183,28 +1183,28 @@
         -: 1181:   /* This need not be an internal error - if the app calls
         -: 1182:    * png_set_unknown_chunks on a read pointer it must get the location right.
         -: 1183:    */
-    #####: 1184:   if (location == 0)
+       12: 1184:   if (location == 0)
     #####: 1185:      png_error(png_ptr, "invalid location in png_set_unknown_chunks");
         -: 1186:
         -: 1187:   /* Now reduce the location to the top-most set bit by removing each least
         -: 1188:    * significant bit in turn.
         -: 1189:    */
-    #####: 1190:   while (location != (location & -location))
+       24: 1190:   while (location != (location & -location))
     #####: 1191:      location &= ~(location & -location);
         -: 1192:
         -: 1193:   /* The cast is safe because 'location' is a bit mask and only the low four
         -: 1194:    * bits are significant.
         -: 1195:    */
-    #####: 1196:   return (png_byte)location;
+       12: 1196:   return (png_byte)location;
         -: 1197:}
         -: 1198:
         -: 1199:void PNGAPI
-    #####: 1200:png_set_unknown_chunks(png_const_structrp png_ptr,
+       12: 1200:png_set_unknown_chunks(png_const_structrp png_ptr,
         -: 1201:    png_inforp info_ptr, png_const_unknown_chunkp unknowns, int num_unknowns)
         -: 1202:{
         -: 1203:   png_unknown_chunkp np;
         -: 1204:
-    #####: 1205:   if (png_ptr == NULL || info_ptr == NULL || num_unknowns <= 0 ||
+       12: 1205:   if (png_ptr == NULL || info_ptr == NULL || num_unknowns <= 0 ||
         -: 1206:       unknowns == NULL)
     #####: 1207:      return;
         -: 1208:
@@ -1238,11 +1238,11 @@
         -: 1236:    * undefined behavior.  Now png_chunk_report is used to provide behavior
         -: 1237:    * appropriate to read or write.
         -: 1238:    */
-    #####: 1239:   np = png_voidcast(png_unknown_chunkp, png_realloc_array(png_ptr,
+       12: 1239:   np = png_voidcast(png_unknown_chunkp, png_realloc_array(png_ptr,
         -: 1240:       info_ptr->unknown_chunks, info_ptr->unknown_chunks_num, num_unknowns,
         -: 1241:       sizeof *np));
         -: 1242:
-    #####: 1243:   if (np == NULL)
+       12: 1243:   if (np == NULL)
         -: 1244:   {
     #####: 1245:      png_chunk_report(png_ptr, "too many unknown chunks",
         -: 1246:          PNG_CHUNK_WRITE_ERROR);
@@ -1250,22 +1250,22 @@
     #####: 1248:      return;
         -: 1249:   }
         -: 1250:
-    #####: 1251:   png_free(png_ptr, info_ptr->unknown_chunks);
-    #####: 1252:   info_ptr->unknown_chunks = np; /* safe because it is initialized */
-    #####: 1253:   info_ptr->free_me |= PNG_FREE_UNKN;
+       12: 1251:   png_free(png_ptr, info_ptr->unknown_chunks);
+       12: 1252:   info_ptr->unknown_chunks = np; /* safe because it is initialized */
+       12: 1253:   info_ptr->free_me |= PNG_FREE_UNKN;
         -: 1254:
-    #####: 1255:   np += info_ptr->unknown_chunks_num;
+       12: 1255:   np += info_ptr->unknown_chunks_num;
         -: 1256:
         -: 1257:   /* Increment unknown_chunks_num each time round the loop to protect the
         -: 1258:    * just-allocated chunk data.
         -: 1259:    */
-    #####: 1260:   for (; num_unknowns > 0; --num_unknowns, ++unknowns)
+       24: 1260:   for (; num_unknowns > 0; --num_unknowns, ++unknowns)
         -: 1261:   {
-    #####: 1262:      memcpy(np->name, unknowns->name, (sizeof np->name));
-    #####: 1263:      np->name[(sizeof np->name)-1] = '\0';
-    #####: 1264:      np->location = check_location(png_ptr, unknowns->location);
+       12: 1262:      memcpy(np->name, unknowns->name, (sizeof np->name));
+       12: 1263:      np->name[(sizeof np->name)-1] = '\0';
+       12: 1264:      np->location = check_location(png_ptr, unknowns->location);
         -: 1265:
-    #####: 1266:      if (unknowns->size == 0)
+       12: 1266:      if (unknowns->size == 0)
         -: 1267:      {
     #####: 1268:         np->data = NULL;
     #####: 1269:         np->size = 0;
@@ -1273,10 +1273,10 @@
         -: 1271:
         -: 1272:      else
         -: 1273:      {
-    #####: 1274:         np->data = png_voidcast(png_bytep,
+       12: 1274:         np->data = png_voidcast(png_bytep,
         -: 1275:             png_malloc_base(png_ptr, unknowns->size));
         -: 1276:
-    #####: 1277:         if (np->data == NULL)
+       12: 1277:         if (np->data == NULL)
         -: 1278:         {
     #####: 1279:            png_chunk_report(png_ptr, "unknown chunk: out of memory",
         -: 1280:                PNG_CHUNK_WRITE_ERROR);
@@ -1284,16 +1284,16 @@
     #####: 1282:            continue;
         -: 1283:         }
         -: 1284:
-    #####: 1285:         memcpy(np->data, unknowns->data, unknowns->size);
-    #####: 1286:         np->size = unknowns->size;
+       12: 1285:         memcpy(np->data, unknowns->data, unknowns->size);
+       12: 1286:         np->size = unknowns->size;
         -: 1287:      }
         -: 1288:
         -: 1289:      /* These increments are skipped on out-of-memory for the data - the
         -: 1290:       * unknown chunk entry gets overwritten if the png_chunk_report returns.
         -: 1291:       * This is correct in the read case (the chunk is just dropped.)
         -: 1292:       */
-    #####: 1293:      ++np;
-    #####: 1294:      ++(info_ptr->unknown_chunks_num);
+       12: 1293:      ++np;
+       12: 1294:      ++(info_ptr->unknown_chunks_num);
         -: 1295:   }
         -: 1296:}
         -: 1297:
@@ -1371,29 +1371,29 @@
         -: 1369:}
         -: 1370:
         -: 1371:void PNGAPI
-       30: 1372:png_set_keep_unknown_chunks(png_structrp png_ptr, int keep,
+      114: 1372:png_set_keep_unknown_chunks(png_structrp png_ptr, int keep,
         -: 1373:    png_const_bytep chunk_list, int num_chunks_in)
         -: 1374:{
         -: 1375:   png_bytep new_list;
         -: 1376:   unsigned int num_chunks, old_num_chunks;
         -: 1377:
-       30: 1378:   if (png_ptr == NULL)
+      114: 1378:   if (png_ptr == NULL)
     #####: 1379:      return;
         -: 1380:
-       30: 1381:   if (keep < 0 || keep >= PNG_HANDLE_CHUNK_LAST)
+      114: 1381:   if (keep < 0 || keep >= PNG_HANDLE_CHUNK_LAST)
         -: 1382:   {
     #####: 1383:      png_app_error(png_ptr, "png_set_keep_unknown_chunks: invalid keep");
         -: 1384:
     #####: 1385:      return;
         -: 1386:   }
         -: 1387:
-       30: 1388:   if (num_chunks_in <= 0)
+      114: 1388:   if (num_chunks_in <= 0)
         -: 1389:   {
-       30: 1390:      png_ptr->unknown_default = keep;
+      114: 1390:      png_ptr->unknown_default = keep;
         -: 1391:
         -: 1392:      /* '0' means just set the flags, so stop here */
-       30: 1393:      if (num_chunks_in == 0)
-       30: 1394:        return;
+      114: 1393:      if (num_chunks_in == 0)
+      114: 1394:        return;
         -: 1395:   }
         -: 1396:
     #####: 1397:   if (num_chunks_in < 0)
@@ -1530,16 +1530,16 @@
         -: 1528:
         -: 1529:#ifdef PNG_READ_USER_CHUNKS_SUPPORTED
         -: 1530:void PNGAPI
-       15: 1531:png_set_read_user_chunk_fn(png_structrp png_ptr, png_voidp user_chunk_ptr,
+       57: 1531:png_set_read_user_chunk_fn(png_structrp png_ptr, png_voidp user_chunk_ptr,
         -: 1532:    png_user_chunk_ptr read_user_chunk_fn)
         -: 1533:{
         -: 1534:   png_debug(1, "in png_set_read_user_chunk_fn");
         -: 1535:
-       15: 1536:   if (png_ptr == NULL)
+       57: 1536:   if (png_ptr == NULL)
     #####: 1537:      return;
         -: 1538:
-       15: 1539:   png_ptr->read_user_chunk_fn = read_user_chunk_fn;
-       15: 1540:   png_ptr->user_chunk_ptr = user_chunk_ptr;
+       57: 1539:   png_ptr->read_user_chunk_fn = read_user_chunk_fn;
+       57: 1540:   png_ptr->user_chunk_ptr = user_chunk_ptr;
         -: 1541:}
         -: 1542:#endif
         -: 1543:
@@ -1725,41 +1725,41 @@
         -: 1723: * valid one could not be generated, and the caller must png_error.
         -: 1724: */
         -: 1725:png_uint_32 /* PRIVATE */
-       15: 1726:png_check_keyword(png_structrp png_ptr, png_const_charp key, png_bytep new_key)
+       39: 1726:png_check_keyword(png_structrp png_ptr, png_const_charp key, png_bytep new_key)
         -: 1727:{
         -: 1728:#ifdef PNG_WARNINGS_SUPPORTED
-       15: 1729:   png_const_charp orig_key = key;
+       39: 1729:   png_const_charp orig_key = key;
         -: 1730:#endif
-       15: 1731:   png_uint_32 key_len = 0;
-       15: 1732:   int bad_character = 0;
-       15: 1733:   int space = 1;
+       39: 1731:   png_uint_32 key_len = 0;
+       39: 1732:   int bad_character = 0;
+       39: 1733:   int space = 1;
         -: 1734:
         -: 1735:   png_debug(1, "in png_check_keyword");
         -: 1736:
-       15: 1737:   if (key == NULL)
+       39: 1737:   if (key == NULL)
         -: 1738:   {
     #####: 1739:      *new_key = 0;
     #####: 1740:      return 0;
         -: 1741:   }
         -: 1742:
-      195: 1743:   while (*key && key_len < 79)
+      543: 1743:   while (*key && key_len < 79)
         -: 1744:   {
-      165: 1745:      png_byte ch = (png_byte)*key++;
+      465: 1745:      png_byte ch = (png_byte)*key++;
         -: 1746:
-      165: 1747:      if ((ch > 32 && ch <= 126) || (ch >= 161 /*&& ch <= 255*/))
+      465: 1747:      if ((ch > 32 && ch <= 126) || (ch >= 161 /*&& ch <= 255*/))
         -: 1748:      {
-      159: 1749:         *new_key++ = ch; ++key_len; space = 0;
+      450: 1749:         *new_key++ = ch; ++key_len; space = 0;
         -: 1750:      }
         -: 1751:
-        6: 1752:      else if (space == 0)
+       15: 1752:      else if (space == 0)
         -: 1753:      {
         -: 1754:         /* A space or an invalid character when one wasn't seen immediately
         -: 1755:          * before; output just a space.
         -: 1756:          */
-        6: 1757:         *new_key++ = 32; ++key_len; space = 1;
+       15: 1757:         *new_key++ = 32; ++key_len; space = 1;
         -: 1758:
         -: 1759:         /* If the character was not a space then it is invalid. */
-        6: 1760:         if (ch != 32)
+       15: 1760:         if (ch != 32)
     #####: 1761:            bad_character = ch;
         -: 1762:      }
         -: 1763:
@@ -1767,7 +1767,7 @@
     #####: 1765:         bad_character = ch; /* just skip it, record the first error */
         -: 1766:   }
         -: 1767:
-       15: 1768:   if (key_len > 0 && space != 0) /* trailing space */
+       39: 1768:   if (key_len > 0 && space != 0) /* trailing space */
         -: 1769:   {
     #####: 1770:      --key_len; --new_key;
     #####: 1771:      if (bad_character == 0)
@@ -1775,17 +1775,17 @@
         -: 1773:   }
         -: 1774:
         -: 1775:   /* Terminate the keyword */
-       15: 1776:   *new_key = 0;
+       39: 1776:   *new_key = 0;
         -: 1777:
-       15: 1778:   if (key_len == 0)
+       39: 1778:   if (key_len == 0)
     #####: 1779:      return 0;
         -: 1780:
         -: 1781:#ifdef PNG_WARNINGS_SUPPORTED
         -: 1782:   /* Try to only output one warning per keyword: */
-       15: 1783:   if (*key != 0) /* keyword too long */
+       39: 1783:   if (*key != 0) /* keyword too long */
     #####: 1784:      png_warning(png_ptr, "keyword truncated");
         -: 1785:
-       15: 1786:   else if (bad_character != 0)
+       39: 1786:   else if (bad_character != 0)
         -: 1787:   {
         -: 1788:      PNG_WARNING_PARAMETERS(p)
         -: 1789:
@@ -1798,7 +1798,7 @@
         -: 1796:   PNG_UNUSED(png_ptr)
         -: 1797:#endif /* !WARNINGS */
         -: 1798:
-       15: 1799:   return key_len;
+       39: 1799:   return key_len;
         -: 1800:}
         -: 1801:#endif /* TEXT || pCAL || iCCP || sPLT */
         -: 1802:#endif /* READ || WRITE */
