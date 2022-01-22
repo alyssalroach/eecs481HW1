@@ -98,17 +98,17 @@
         -:   96:#if defined(PNG_READ_INTERLACING_SUPPORTED) || \
         -:   97:    defined(PNG_WRITE_INTERLACING_SUPPORTED)
         -:   98:int PNGAPI
-      114:   99:png_set_interlace_handling(png_structrp png_ptr)
+      150:   99:png_set_interlace_handling(png_structrp png_ptr)
         -:  100:{
         -:  101:   png_debug(1, "in png_set_interlace handling");
         -:  102:
-      114:  103:   if (png_ptr != 0 && png_ptr->interlaced != 0)
+      150:  103:   if (png_ptr != 0 && png_ptr->interlaced != 0)
         -:  104:   {
        24:  105:      png_ptr->transformations |= PNG_INTERLACE;
        24:  106:      return (7);
         -:  107:   }
         -:  108:
-       90:  109:   return (1);
+      126:  109:   return (1);
         -:  110:}
         -:  111:#endif
         -:  112:
@@ -698,10 +698,10 @@
         -:  696:    defined(PNG_WRITE_CHECK_FOR_INVALID_INDEX_SUPPORTED)
         -:  697:/* Added at libpng-1.5.10 */
         -:  698:void /* PRIVATE */
-     2466:  699:png_do_check_palette_indexes(png_structrp png_ptr, png_row_infop row_info)
+     2658:  699:png_do_check_palette_indexes(png_structrp png_ptr, png_row_infop row_info)
         -:  700:{
-     3048:  701:   if (png_ptr->num_palette < (1 << row_info->bit_depth) &&
-      582:  702:      png_ptr->num_palette > 0) /* num_palette can be 0 in MNG files */
+     3432:  701:   if (png_ptr->num_palette < (1 << row_info->bit_depth) &&
+      774:  702:      png_ptr->num_palette > 0) /* num_palette can be 0 in MNG files */
         -:  703:   {
         -:  704:      /* Calculations moved outside switch in an attempt to stop different
         -:  705:       * compiler warnings.  'padding' is in *bits* within the last byte, it is
@@ -709,10 +709,10 @@
         -:  707:       * and this calculation is used because it avoids warnings that other
         -:  708:       * forms produced on either GCC or MSVC.
         -:  709:       */
-      582:  710:      int padding = PNG_PADBITS(row_info->pixel_depth, row_info->width);
-      582:  711:      png_bytep rp = png_ptr->row_buf + row_info->rowbytes - 1;
+      774:  710:      int padding = PNG_PADBITS(row_info->pixel_depth, row_info->width);
+      774:  711:      png_bytep rp = png_ptr->row_buf + row_info->rowbytes - 1;
         -:  712:
-      582:  713:      switch (row_info->bit_depth)
+      774:  713:      switch (row_info->bit_depth)
         -:  714:      {
         -:  715:         case 1:
         -:  716:         {
@@ -781,20 +781,20 @@
         -:  779:
         -:  780:         case 8:
         -:  781:         {
-    40740:  782:            for (; rp > png_ptr->row_buf; rp--)
+    46884:  782:            for (; rp > png_ptr->row_buf; rp--)
         -:  783:            {
-    40176:  784:               if (*rp > png_ptr->num_palette_max)
-      216:  785:                  png_ptr->num_palette_max = (int) *rp;
+    46128:  784:               if (*rp > png_ptr->num_palette_max)
+      240:  785:                  png_ptr->num_palette_max = (int) *rp;
         -:  786:            }
         -:  787:
-      564:  788:            break;
+      756:  788:            break;
         -:  789:         }
         -:  790:
         -:  791:         default:
     #####:  792:            break;
         -:  793:      }
         -:  794:   }
-     2466:  795:}
+     2658:  795:}
         -:  796:#endif /* CHECK_FOR_INVALID_INDEX */
         -:  797:
         -:  798:#if defined(PNG_READ_USER_TRANSFORM_SUPPORTED) || \

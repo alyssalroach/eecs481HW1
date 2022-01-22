@@ -67,4 +67,22 @@ gcov *.c
 ./pngtest tests1b/z09n2c08.png
 gcov *.c
 
+./pngtest tests1b/bggn4a16.png
+gcov *.c
+
+./pngtest tests1b/ccwn3p08.png
+gcov *.c
+
+./pngtest tests1b/ctfn0g04.png
+gcov *.c
+
+./pngtest tests1b/exif2c08.png
+gcov *.c
+
+./pngtest tests1b/pp0n6a08.png
+gcov *.c
+
+./pngtest tests1b/oi4n0g16.png
+gcov *.c
+
 $ rm *.gcda pngout.png
