@@ -1,6 +1,6 @@
-/* ===================
- * Orson Charts - Demo
- * ===================
+/* =========================
+ * TimeSeriesChartDemo1.java
+ * =========================
  *
  * Copyright 2013-2022, by David Gilbert. All rights reserved.
  *
@@ -27,176 +27,176 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
- * Note that the above terms apply to the demo source only, and not the 
- * Orson Charts library.
- * 
+ *
  */
 
-package com.orsoncharts.demo;
+package test;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.LayoutManager;
+import java.awt.Font;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.GradientPaint;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.awt.Point;
+import java.awt.RadialGradientPaint;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.ui.ApplicationFrame;
+import org.jfree.chart.ui.RectangleInsets;
+import org.jfree.chart.ui.UIUtils;
+import org.jfree.data.time.Month;
+import org.jfree.data.time.TimeSeries;
+import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.data.xy.XYDataset;
 
-import javax.swing.JLabel;
-import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-import org.jfree.chart3d.Chart3D;
-import org.jfree.chart3d.Chart3DFactory;
-import org.jfree.chart3d.Chart3DPanel;
-import org.jfree.chart3d.axis.ValueAxis3D;
-import org.jfree.chart3d.data.DefaultKeyedValues;
-import org.jfree.chart3d.data.category.CategoryDataset3D;
-import org.jfree.chart3d.data.category.StandardCategoryDataset3D;
-import org.jfree.chart3d.graphics3d.ViewPoint3D;
-import org.jfree.chart3d.graphics3d.swing.DisplayPanel3D;
-import org.jfree.chart3d.label.StandardCategoryItemLabelGenerator;
-import org.jfree.chart3d.plot.CategoryPlot3D;
-import org.jfree.chart3d.renderer.category.AreaRenderer3D;
+import javax.swing.*;
+import java.text.SimpleDateFormat;
 
 /**
- * A test for changes to the value axis range on an area chart.
+ * An example of a time series chart create using JFreeChart.  For the most 
+ * part, default settings are used, except that the renderer is modified to 
+ * show filled shapes (as well as lines) at each data point.
  */
-@SuppressWarnings("serial")
-public class AxisRangeDemo1 extends JFrame {
+public class ChartTest4 {
 
-    static class CustomDemoPanel extends DemoPanel implements ChangeListener {
-        
-        private final JSlider slider1;
-        
-        private final JSlider slider2;
-        
-        public CustomDemoPanel(LayoutManager layout) {
-            super(layout);
-            this.slider1 = new JSlider(-1000, 0);
-            this.slider1.setValue(-500);
-            this.slider2 = new JSlider(0, 1000);
-            this.slider2.setValue(500);
-            this.slider1.addChangeListener(this);
-            this.slider2.addChangeListener(this);
-            JPanel sliderPanel = new JPanel(new FlowLayout());
-            sliderPanel.add(new JLabel("Value axis lower bound: "));
-            sliderPanel.add(this.slider1);
-            sliderPanel.add(new JLabel("Upper bound: "));
-            sliderPanel.add(this.slider2);
-            add(sliderPanel, BorderLayout.SOUTH);
-        }    
+    private static JFreeChart createChart(XYDataset dataset) {
 
-        @Override
-        public void stateChanged(ChangeEvent e) {
-            Chart3D chart = (Chart3D) getChartPanel().getDrawable();
-            CategoryPlot3D plot = (CategoryPlot3D) chart.getPlot();
-            ValueAxis3D yAxis = plot.getValueAxis();
-            int min = this.slider1.getValue();
-            int max = this.slider2.getValue();
-            if (min != max) {
-                yAxis.setRange(min, max);
-            }
+        JFreeChart chart = ChartFactory.createTimeSeriesChart(
+            "Legal & General Unit Trust Prices",  // title
+            "Date",             // x-axis label
+            "Price Per Unit",   // y-axis label
+            dataset);
+
+        chart.setBackgroundPaint(Color.WHITE);
+
+        XYPlot plot = (XYPlot) chart.getPlot();
+        plot.setBackgroundPaint(Color.LIGHT_GRAY);
+        plot.setDomainGridlinePaint(Color.WHITE);
+        plot.setRangeGridlinePaint(Color.WHITE);
+        plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
+        plot.setDomainCrosshairVisible(true);
+        plot.setRangeCrosshairVisible(true);
+
+        XYItemRenderer r = plot.getRenderer();
+        if (r instanceof XYLineAndShapeRenderer) {
+            XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
+            renderer.setDefaultShapesVisible(true);
+            renderer.setDefaultShapesFilled(true);
+            renderer.setDrawSeriesLineAsPath(true);
         }
-    }
-    
-    /**
-     * Creates a new test app.
-     *
-     * @param title  the frame title.
-     */
-    public AxisRangeDemo1(String title) {
-        super(title);
-        addWindowListener(new ExitOnClose());
-        getContentPane().add(createDemoPanel());
+
+        DateAxis axis = (DateAxis) plot.getDomainAxis();
+        axis.setDateFormatOverride(new SimpleDateFormat("MMM-yyyy"));
+
+        return chart;
+
     }
 
-    /**
-     * Returns a panel containing the content for the demo.  This method is
-     * used across all the individual demo applications to allow aggregation 
-     * into a single "umbrella" demo (OrsonChartsDemo).
-     * 
-     * @return A panel containing the content for the demo.
-     */
-    public static JPanel createDemoPanel() {
-        DemoPanel content = new CustomDemoPanel(new BorderLayout());
-        content.setPreferredSize(OrsonChartsDemo.DEFAULT_CONTENT_SIZE);
-        CategoryDataset3D dataset = createDataset();
-        Chart3D chart = Chart3DFactory.createAreaChart("AxisRangeDemo1", 
-                "A test for rendering with a restricted value range", dataset, 
-                "Row", "Category", "Value");
-        chart.setChartBoxColor(new Color(255, 255, 255, 128));
-        chart.setViewPoint(ViewPoint3D.createAboveLeftViewPoint(40));
+    private static XYDataset createDataset() {
 
-        CategoryPlot3D plot = (CategoryPlot3D) chart.getPlot();
-        plot.getValueAxis().setRange(-500, 500);
-        plot.getRowAxis().setVisible(false);
-        
-        AreaRenderer3D renderer = (AreaRenderer3D) plot.getRenderer();
-        renderer.setItemLabelGenerator(new StandardCategoryItemLabelGenerator(
-                StandardCategoryItemLabelGenerator.VALUE_TEMPLATE));
-        Chart3DPanel chartPanel = new Chart3DPanel(chart);
-        content.setChartPanel(chartPanel);
-        content.add(new DisplayPanel3D(chartPanel));
-        chartPanel.zoomToFit(OrsonChartsDemo.DEFAULT_CONTENT_SIZE);
-       
-        return content;
-    }
-  
-    /**
-     * Creates a sample dataset (hard-coded for the purpose of keeping the
-     * demo self-contained - in practice you would normally read your data
-     * from a file, database or other source).
-     * 
-     * @return A sample dataset.
-     */
-    private static CategoryDataset3D<String, String, String> createDataset() {    
+        TimeSeries s1 = new TimeSeries("L&G European Index Trust");
+        s1.add(new Month(2, 2001), 181.8);
+        s1.add(new Month(3, 2001), 167.3);
+        s1.add(new Month(4, 2001), 153.8);
+        s1.add(new Month(5, 2001), 167.6);
+        s1.add(new Month(6, 2001), 158.8);
+        s1.add(new Month(7, 2001), 148.3);
+        s1.add(new Month(8, 2001), 153.9);
+        s1.add(new Month(9, 2001), 142.7);
+        s1.add(new Month(10, 2001), 123.2);
+        s1.add(new Month(11, 2001), 131.8);
+        s1.add(new Month(12, 2001), 139.6);
+        s1.add(new Month(1, 2002), 142.9);
+        s1.add(new Month(2, 2002), 138.7);
+        s1.add(new Month(3, 2002), 137.3);
+        s1.add(new Month(4, 2002), 143.9);
+        s1.add(new Month(5, 2002), 139.8);
+        s1.add(new Month(6, 2002), 137.0);
+        s1.add(new Month(7, 2002), 132.8);
 
-        StandardCategoryDataset3D<String, String, String> dataset 
-                = new StandardCategoryDataset3D<>();
-        
-        DefaultKeyedValues<String, Number> s0 = new DefaultKeyedValues<>();
-        s0.put("A", -500);
-        s0.put("B", -200);
-        s0.put("C", -400);
-        s0.put("D", -150);
-        dataset.addSeriesAsRow("All Negative", s0);
-        
-        DefaultKeyedValues<String, Number> s1 = new DefaultKeyedValues<>();
-        s1.put("A", -500);
-        s1.put("B", 500);
-        s1.put("C", 0);
-        s1.put("D", -150);
-        dataset.addSeriesAsRow("Alternating 1", s1);
+        TimeSeries s2 = new TimeSeries("L&G UK Index Trust");
+        s2.add(new Month(2, 2001), 129.6);
+        s2.add(new Month(3, 2001), 123.2);
+        s2.add(new Month(4, 2001), 117.2);
+        s2.add(new Month(5, 2001), 124.1);
+        s2.add(new Month(6, 2001), 122.6);
+        s2.add(new Month(7, 2001), 119.2);
+        s2.add(new Month(8, 2001), 116.5);
+        s2.add(new Month(9, 2001), 112.7);
+        s2.add(new Month(10, 2001), 101.5);
+        s2.add(new Month(11, 2001), 106.1);
+        s2.add(new Month(12, 2001), 110.3);
+        s2.add(new Month(1, 2002), 111.7);
+        s2.add(new Month(2, 2002), 111.0);
+        s2.add(new Month(3, 2002), 109.6);
+        s2.add(new Month(4, 2002), 113.2);
+        s2.add(new Month(5, 2002), 111.6);
+        s2.add(new Month(6, 2002), 108.8);
+        s2.add(new Month(7, 2002), 101.6);
 
-        DefaultKeyedValues<String, Number> s2 = new DefaultKeyedValues<>();
-        s2.put("A", 500);
-        s2.put("B", -500);
-        s2.put("C", 0);
-        s2.put("D", 150);
-        dataset.addSeriesAsRow("Alternating 2", s2);
-
-        DefaultKeyedValues<String, Number> s3 = new DefaultKeyedValues<>();
-        s3.put("A", 500);
-        s3.put("B", 200);
-        s3.put("C", 400);
-        s3.put("D", 150);
-        dataset.addSeriesAsRow("All Positive", s3);
+        TimeSeriesCollection dataset = new TimeSeriesCollection();
+        dataset.addSeries(s1);
+        dataset.addSeries(s2);
 
         return dataset;
+
+    }
+
+    public static JPanel createDemoPanel() {
+        JFreeChart chart = createChart(createDataset());
+        ChartPanel panel = new ChartPanel(chart, false);
+        panel.setFillZoomRectangle(true);
+        panel.setMouseWheelEnabled(true);
+        return panel;
     }
 
     /**
-     * Starting point for the app.
+     * Starting point for the demonstration application.
      *
-     * @param args  command line arguments (ignored).
+     * @param args  ignored.
      */
-    public static void main(String[] args) {
-        AxisRangeDemo1 app = new AxisRangeDemo1(
-                "OrsonCharts: AreaChart3DDemo3.java");
-        app.pack();
-        app.setVisible(true);
+    public static void main(String[] args) throws IOException {
+        JFreeChart chart = createChart(createDataset());
+        ChartPanel panel = new ChartPanel(chart, false);
+        panel.setFillZoomRectangle(true);
+        panel.setMouseWheelEnabled(true);
+
+        panel.setPreferredSize(new java.awt.Dimension(500, 270));
+        setContentPane(panel);
+
+        BufferedImage img = new BufferedImage(1, 1,
+        BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = img.createGraphics();
+        g2.dispose();
+
+        // now create an image of the required size for the legend
+        int w = (int) Math.rint(800);
+        int h = (int) Math.rint(600);
+        BufferedImage img2 = new BufferedImage(w, h,
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g22 = img2.createGraphics();
+        panel.draw(g22, new Rectangle2D.Double(0, 0, w, h));
+        g22.dispose();
+
+        // ...and save it to a PNG image
+        OutputStream out = new BufferedOutputStream(new FileOutputStream(
+                new File("output4.png")));
+        ChartUtils.writeBufferedImageAsPNG(out, img2);
+        out.close();
+        System.out.println("output4.png created"); 
+
     }
 
 }
