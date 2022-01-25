@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.block.BlockBorder;
@@ -103,7 +104,7 @@ public class ChartTest3 {
      * @param args  ignored.
      * @throws IOException
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         CategoryDataset dataset = createDataset();
         JFreeChart chart = createChart(dataset);
 
@@ -123,10 +124,10 @@ public class ChartTest3 {
 
         // ...and save it to a PNG image
         OutputStream out = new BufferedOutputStream(new FileOutputStream(
-                new File("output2.png")));
+                new File("output3.png")));
         ChartUtils.writeBufferedImageAsPNG(out, img2);
         out.close();
-        System.out.println("output2.png created"); 
+        System.out.println("output3.png created"); 
     }
 
 }
