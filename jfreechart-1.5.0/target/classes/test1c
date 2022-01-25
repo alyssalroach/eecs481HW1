@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Stops on errors and prints commands
+
+# Stop on errors, print commands
+# See https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
+set -Eeuo pipefail
+set -x
+
+
+cobertura-instrument org/
+
+javac -cp /usr/share/java/cobertura.jar:. test/ChartTest1.java
+
+java -cp /usr/share/java/cobertura.jar:. test/ChartTest1
+
+cobertura-check --totalline 100
+
+cobertura-check --totalbranch 100
+
+javac -cp /usr/share/java/cobertura.jar:. test/ChartTest2.java
+
+java -cp /usr/share/java/cobertura.jar:. test/ChartTest2
+
+cobertura-check --totalline 100
+
+cobertura-check --totalbranch 100
+
